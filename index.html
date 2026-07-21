@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>像素画室 | Pixel Studio — 免费在线像素绘画工具</title>
+
+<!-- SEO Meta -->
+<meta name="description" content="像素画室是一款免费在线像素绘画工具，支持电脑和手机端使用。提供画笔、橡皮、填充、取色器等多种工具，可导出PNG图片，无需注册，打开即用。">
+<meta name="keywords" content="像素画,像素绘画,在线绘画,pixel art,像素画工具,像素画室,pixel studio,免费像素画,像素画在线">
+<meta name="author" content="Pixel Studio">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://pixel-studio.pages.dev/">
+
+<!-- Open Graph / Social -->
+<meta property="og:title" content="像素画室 | Pixel Studio — 免费在线像素绘画工具">
+<meta property="og:description" content="温和舒适的像素绘画工具，支持电脑和手机，打开即用，无需安装。🐱 像素黑猫伴你创作！">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="像素画室">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="像素画室 | Pixel Studio — 免费在线像素绘画工具">
+<meta name="twitter:description" content="温和舒适的像素绘画工具，支持电脑和手机，打开即用。🐱">
+
+<!-- PWA / Mobile Web App -->
+<meta name="theme-color" content="#FFF8F0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="像素画室">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="像素画室">
+<link rel="manifest" href="manifest.json">
+
+<!-- Favicon (inline SVG pixel cat) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23FFF8F0'/><text font-size='24' x='4' y='26'>🐱</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23FFF8F0'/><text font-size='24' x='4' y='26'>🐱</text></svg>">
+
+<!-- Structured Data (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "像素画室",
+  "alternateName": "Pixel Studio",
+  "url": "https://pixel-studio.pages.dev/",
+  "description": "免费在线像素绘画工具，支持电脑和手机端使用。提供画笔、橡皮、填充、取色器等多种工具，可导出PNG图片。",
+  "applicationCategory": "Multimedia",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+  "browserRequirements": "Requires JavaScript and HTML5 Canvas",
+  "inLanguage": ["zh-CN", "en-US"],
+  "featureList": "https://schema.org/WebApplication"
+}
+</script>
+<style>
+/* ============ CSS Reset & Base ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #FFF8F0;
+  --panel-bg: #FFF0E0;
+  --hover: #FFE4CC;
+  --primary: #E8A850;
+  --primary-dark: #D4914A;
+  --secondary: #C4886C;
+  --text: #4A3028;
+  --text-light: #7A6058;
+  --disabled: #F5F0EB;
+  --success: #8BC4A1;
+  --danger: #E8A0A0;
+  --info: #8BB8D0;
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow-sm: 0 2px 8px rgba(74,48,40,0.08);
+  --shadow: 0 2px 8px rgba(74,48,40,0.10);
+  --shadow-md: 0 4px 16px rgba(74,48,40,0.15);
+  --font: "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+  --mono: "SF Mono", "Consolas", monospace;
+  --header-h: 52px;
+  --footer-h: 44px;
+}
+
+html, body {
+  height: 100%; overflow: hidden;
+  font-family: var(--font); font-size: 14px;
+  color: var(--text); background: var(--bg);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none; -webkit-user-select: none;
+}
+
+button {
+  font-family: inherit; cursor: pointer; border: none;
+  background: none; color: inherit; font-size: inherit;
+  transition: all 0.2s ease;
+}
+button:active { transform: scale(0.96); }
+
+input { font-family: inherit; font-size: inherit; }
+
+/* ============ Loading Screen ============ */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.6s ease;
+}
+#loading-screen.hidden { opacity: 0; pointer-events: none; }
+#loading-cat-canvas { width: 200px; height: 120px; }
+#loading-text {
+  margin-top: 12px; color: var(--text-light); font-size: 15px;
+  animation: breathe 1.5s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* ============ App Layout ============ */
+#app {
+  display: flex; flex-direction: column;
+  height: 100%; width: 100%;
+}
+#app.hidden { display: none; }
+
+/* Header */
+#header {
+  display: flex; align-items: center; justify-content: space-between;
+  height: var(--header-h); padding: 0 16px;
+  background: var(--panel-bg);
+  border-bottom: 1px solid rgba(74,48,40,0.08);
+  gap: 8px; flex-shrink: 0;
+}
+#header .logo {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 18px; font-weight: 700; color: var(--text);
+  white-space: nowrap;
+}
+#header .logo span { font-size: 22px; }
+#header .actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+#header .actions button {
+  padding: 6px 14px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 500;
+  background: var(--panel-bg); color: var(--text);
+  border: 1px solid rgba(74,48,40,0.12);
+  white-space: nowrap;
+}
+#header .actions button:hover { background: var(--hover); }
+#header .actions button.primary {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+}
+#header .actions button.primary:hover { background: var(--primary-dark); }
+#header .actions button.icon-btn {
+  width: 34px; height: 34px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+
+/* Main Content */
+#main-content {
+  display: flex; flex: 1; overflow: hidden;
+}
+
+/* Toolbar */
+#toolbar {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 12px 8px; width: 64px; flex-shrink: 0;
+  background: var(--panel-bg);
+  border-right: 1px solid rgba(74,48,40,0.08);
+  align-items: center;
+}
+.tool-btn {
+  width: 46px; height: 46px; border-radius: var(--radius);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 2px;
+  font-size: 20px; position: relative;
+  border: 2px solid transparent;
+  color: var(--text-light);
+}
+.tool-btn .tool-label {
+  font-size: 10px; line-height: 1; color: var(--text-light);
+}
+.tool-btn:hover { background: var(--hover); }
+.tool-btn.active {
+  background: var(--hover); border-color: var(--primary);
+  color: var(--text);
+}
+.tool-btn.active .tool-label { color: var(--text); }
+
+/* Canvas Area */
+#canvas-area {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  overflow: auto; padding: 16px;
+  background:
+    repeating-conic-gradient(#f0e8e0 0% 25%, transparent 0% 50%) 50% / 20px 20px;
+}
+#canvas-wrapper {
+  box-shadow: var(--shadow-md); border-radius: 2px;
+  line-height: 0; flex-shrink: 0;
+}
+#main-canvas {
+  display: block; cursor: crosshair;
+  image-rendering: pixelated;
+}
+
+/* Palette */
+#palette-panel {
+  width: 180px; flex-shrink: 0; padding: 12px;
+  background: var(--panel-bg);
+  border-left: 1px solid rgba(74,48,40,0.08);
+  display: flex; flex-direction: column; gap: 12px;
+  overflow-y: auto;
+}
+#current-color-display {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 3px solid #fff; box-shadow: var(--shadow-sm);
+  align-self: center; flex-shrink: 0;
+}
+.palette-section-title {
+  font-size: 12px; font-weight: 600; color: var(--text-light);
+  margin-bottom: 4px;
+}
+.color-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
+}
+.color-swatch {
+  width: 100%; aspect-ratio: 1;
+  border-radius: var(--radius-sm); cursor: pointer;
+  border: 2px solid transparent; transition: all 0.15s ease;
+}
+.color-swatch:hover { transform: scale(1.12); z-index: 1; }
+.color-swatch.selected { border-color: var(--text); transform: scale(1.08); }
+#custom-color-input {
+  width: 100%; height: 36px; border: 2px solid rgba(74,48,40,0.15);
+  border-radius: var(--radius); cursor: pointer; padding: 2px 4px;
+  background: #fff;
+}
+
+/* Footer */
+#footer {
+  display: flex; align-items: center; justify-content: center;
+  height: var(--footer-h); padding: 0 16px; gap: 20px;
+  background: var(--panel-bg);
+  border-top: 1px solid rgba(74,48,40,0.08);
+  font-size: 12px; color: var(--text-light);
+  flex-shrink: 0; flex-wrap: wrap;
+}
+#footer label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+#footer .zoom-btns { display: flex; gap: 4px; }
+#footer .zoom-btns button {
+  padding: 3px 10px; border-radius: var(--radius-sm);
+  border: 1px solid rgba(74,48,40,0.15);
+  font-size: 12px; background: #fff;
+}
+#footer .zoom-btns button:hover { background: var(--hover); }
+#footer .zoom-btns button.current {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+}
+#footer .footer-info { color: var(--text-light); }
+
+/* ============ Dialogs ============ */
+#dialog-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(74,48,40,0.3);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+}
+#dialog-overlay.show { opacity: 1; pointer-events: auto; }
+.dialog {
+  background: var(--bg); border-radius: var(--radius-xl);
+  padding: 24px; width: 90%; max-width: 400px;
+  box-shadow: var(--shadow-md);
+  display: flex; flex-direction: column; gap: 16px;
+}
+.dialog h3 { font-size: 18px; text-align: center; }
+.dialog label { font-size: 13px; color: var(--text-light); }
+.dialog input[type="text"], .dialog input[type="number"] {
+  width: 100%; padding: 10px 12px; border: 2px solid rgba(74,48,40,0.15);
+  border-radius: var(--radius); font-size: 15px;
+  outline: none; transition: border-color 0.2s;
+}
+.dialog input:focus { border-color: var(--primary); }
+.dialog .btn-row { display: flex; gap: 8px; justify-content: center; }
+.dialog .btn-row button {
+  padding: 10px 24px; border-radius: var(--radius);
+  font-size: 14px; font-weight: 600;
+}
+.dialog .btn-cancel { background: var(--disabled); color: var(--text); }
+.dialog .btn-confirm { background: var(--primary); color: #fff; }
+.dialog .btn-danger { background: var(--danger); color: #fff; }
+.dialog select {
+  padding: 8px 12px; border: 2px solid rgba(74,48,40,0.15);
+  border-radius: var(--radius); font-size: 14px; background: #fff;
+}
+
+/* ============ Saved Works List ============ */
+#saved-list {
+  display: flex; flex-direction: column; gap: 8px;
+  max-height: 300px; overflow-y: auto;
+}
+.saved-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px; border-radius: var(--radius);
+  background: var(--panel-bg); cursor: pointer;
+  border: 2px solid transparent; transition: all 0.2s;
+}
+.saved-item:hover { border-color: var(--primary); background: var(--hover); }
+.saved-item canvas { border-radius: var(--radius-sm); border: 1px solid rgba(74,48,40,0.1); }
+.saved-item .info { flex: 1; min-width: 0; }
+.saved-item .name { font-weight: 600; font-size: 14px; }
+.saved-item .date { font-size: 11px; color: var(--text-light); }
+.saved-item .del-btn {
+  padding: 6px 12px; border-radius: var(--radius-sm);
+  font-size: 12px; background: var(--danger); color: #fff;
+  flex-shrink: 0;
+}
+.saved-item .del-btn:hover { opacity: 0.85; }
+
+/* ============ Toast ============ */
+#toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+  z-index: 200; padding: 10px 24px;
+  border-radius: 20px; font-size: 14px; font-weight: 500;
+  background: var(--text); color: #fff;
+  box-shadow: var(--shadow-md);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+#toast.show { opacity: 1; }
+
+/* ============ Tutorial ============ */
+#tutorial-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(74,48,40,0.5);
+  display: none; align-items: center; justify-content: center;
+}
+#tutorial-overlay.show { display: flex; }
+#tutorial-highlight {
+  position: fixed; z-index: 301;
+  border: 3px solid var(--primary);
+  border-radius: var(--radius);
+  box-shadow: 0 0 0 9999px rgba(74,48,40,0.5);
+  pointer-events: none; transition: all 0.3s ease;
+  display: none;
+}
+#tutorial-bubble {
+  position: fixed; z-index: 302;
+  background: var(--bg); border-radius: var(--radius-lg);
+  padding: 16px 20px; box-shadow: var(--shadow-md);
+  max-width: 280px; text-align: center;
+  display: none; flex-direction: column; gap: 10px;
+}
+#tutorial-bubble.show { display: flex; }
+#tutorial-bubble p { font-size: 14px; line-height: 1.6; }
+#tutorial-bubble .btn-row { display: flex; gap: 8px; justify-content: center; }
+#tutorial-bubble button {
+  padding: 6px 16px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 600;
+}
+#tutorial-bubble .btn-skip { background: var(--disabled); color: var(--text); }
+#tutorial-bubble .btn-next { background: var(--primary); color: #fff; }
+
+/* ============ PWA Install Prompt ============ */
+#install-prompt {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  z-index: 250; padding: 14px 24px;
+  background: var(--text); color: #fff;
+  border-radius: 24px; font-size: 14px; font-weight: 500;
+  box-shadow: var(--shadow-md);
+  display: none; align-items: center; gap: 12px;
+  white-space: nowrap;
+}
+#install-prompt.show { display: flex; }
+#install-prompt button {
+  padding: 6px 16px; border-radius: 16px; font-size: 13px; font-weight: 600;
+  background: var(--primary); color: #fff;
+}
+#install-prompt .close-prompt {
+  background: transparent; color: rgba(255,255,255,0.6);
+  padding: 4px 8px; font-size: 16px;
+}
+
+/* ============ Mobile Bottom Toolbar (hidden on desktop) ============ */
+#mobile-toolbar {
+  display: none; align-items: center; justify-content: center;
+  gap: 6px; padding: 8px 6px; flex-shrink: 0;
+  background: var(--panel-bg);
+  border-top: 1px solid rgba(74,48,40,0.08);
+}
+#mobile-palette {
+  display: none; align-items: center; gap: 6px;
+  padding: 6px 8px; flex-shrink: 0;
+  background: var(--panel-bg);
+  border-top: 1px solid rgba(74,48,40,0.06);
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+#mobile-palette .color-swatch {
+  width: 28px; height: 28px; flex-shrink: 0;
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 768px) {
+  :root { --header-h: 44px; --footer-h: 36px; }
+  #header { padding: 0 10px; }
+  #header .logo { font-size: 15px; }
+  #header .logo span { font-size: 18px; }
+  #header .actions button { padding: 5px 10px; font-size: 12px; }
+  #toolbar { display: none; }
+  #palette-panel { display: none; }
+  #mobile-toolbar { display: flex; }
+  #mobile-palette { display: flex; }
+  #canvas-area { padding: 8px; }
+  #footer { gap: 10px; padding: 0 8px; font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  #header .actions { gap: 3px; }
+  #header .actions button { padding: 4px 8px; font-size: 11px; }
+  #mobile-toolbar { gap: 3px; padding: 6px 3px; }
+  #mobile-toolbar .tool-btn { width: 40px; height: 40px; font-size: 18px; }
+  #footer { gap: 6px; font-size: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== Loading Screen ==================== -->
+<div id="loading-screen">
+  <canvas id="loading-cat-canvas" width="200" height="120"></canvas>
+  <div id="loading-text">加载中…</div>
+</div>
+
+<!-- ==================== Main App ==================== -->
+<div id="app" class="hidden">
+
+  <!-- Header -->
+  <header id="header">
+    <div class="logo"><span>🐱</span> 像素画室</div>
+    <div class="actions">
+      <button onclick="openNewDialog()" data-i18n="btnNew">🆕 新建</button>
+      <button onclick="saveWork()" data-i18n="btnSave">💾 保存</button>
+      <button onclick="openLoadDialog()" data-i18n="btnLoad">📂 加载</button>
+      <button class="primary" onclick="exportPNG()" data-i18n="btnExport">📤 导出</button>
+      <button class="icon-btn" onclick="switchLang()" title="语言 / Language" data-i18n-title="btnLang">🌐</button>
+      <button class="icon-btn" onclick="startTutorial()" title="帮助" data-i18n-title="btnHelp">❓</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <!-- Desktop Toolbar -->
+    <aside id="toolbar">
+      <button class="tool-btn active" data-tool="pen" onclick="switchTool('pen')" data-i18n-title="toolPen">
+        ✏️<span class="tool-label">画笔</span>
+      </button>
+      <button class="tool-btn" data-tool="eraser" onclick="switchTool('eraser')" data-i18n-title="toolEraser">
+        🧹<span class="tool-label">橡皮</span>
+      </button>
+      <button class="tool-btn" data-tool="fill" onclick="switchTool('fill')" data-i18n-title="toolFill">
+        🪣<span class="tool-label">填充</span>
+      </button>
+      <button class="tool-btn" data-tool="picker" onclick="switchTool('picker')" data-i18n-title="toolPicker">
+        💉<span class="tool-label">取色</span>
+      </button>
+      <button class="tool-btn" onclick="undo()" data-i18n-title="toolUndo">
+        ↩️<span class="tool-label">撤销</span>
+      </button>
+      <button class="tool-btn" onclick="redo()" data-i18n-title="toolRedo">
+        ↪️<span class="tool-label">重做</span>
+      </button>
+    </aside>
+
+    <!-- Canvas Area -->
+    <main id="canvas-area">
+      <div id="canvas-wrapper">
+        <canvas id="main-canvas"></canvas>
+      </div>
+    </main>
+
+    <!-- Desktop Palette -->
+    <aside id="palette-panel">
+      <div id="current-color-display" style="background:#000000;" title="当前颜色"></div>
+      <div>
+        <div class="palette-section-title" data-i18n="paletteTitle">🎨 调色盘</div>
+      </div>
+      <div>
+        <div class="palette-section-title" data-i18n="palettePreset">基础色</div>
+        <div class="color-grid" id="preset-basic"></div>
+      </div>
+      <div>
+        <div class="palette-section-title" data-i18n="paletteWarm">暖色系</div>
+        <div class="color-grid" id="preset-warm"></div>
+      </div>
+      <div>
+        <div class="palette-section-title" data-i18n="paletteNature">自然色</div>
+        <div class="color-grid" id="preset-nature"></div>
+      </div>
+      <div>
+        <div class="palette-section-title" data-i18n="paletteCustom">自定义颜色</div>
+        <input type="color" id="custom-color-input" value="#000000" onchange="setColor(this.value)">
+      </div>
+      <div style="font-size:11px;color:var(--text-light);text-align:center;margin-top:4px;" data-i18n="savedStorageNote">
+        提示：画作保存在浏览器中<br>清除数据会丢失哦
+      </div>
+    </aside>
+  </div>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <label title="切换网格">
+      <input type="checkbox" id="grid-toggle" checked onchange="toggleGrid()">
+      <span data-i18n="gridOn">网格</span>
+    </label>
+    <span data-i18n="zoom">缩放</span>
+    <span class="zoom-btns">
+      <button onclick="setZoom(4)" data-zoom="4">400%</button>
+      <button onclick="setZoom(8)" data-zoom="8" class="current">800%</button>
+      <button onclick="setZoom(16)" data-zoom="16">1600%</button>
+    </span>
+    <span class="footer-info"><span data-i18n="canvasSize">尺寸</span>: <span id="info-size">64×64</span></span>
+  </footer>
+
+  <!-- Mobile Toolbar -->
+  <div id="mobile-toolbar">
+    <button class="tool-btn active" data-tool="pen" onclick="switchTool('pen')" data-i18n-title="toolPen">✏️</button>
+    <button class="tool-btn" data-tool="eraser" onclick="switchTool('eraser')" data-i18n-title="toolEraser">🧹</button>
+    <button class="tool-btn" data-tool="fill" onclick="switchTool('fill')" data-i18n-title="toolFill">🪣</button>
+    <button class="tool-btn" data-tool="picker" onclick="switchTool('picker')" data-i18n-title="toolPicker">💉</button>
+    <button class="tool-btn" onclick="undo()" data-i18n-title="toolUndo">↩️</button>
+    <button class="tool-btn" onclick="redo()" data-i18n-title="toolRedo">↪️</button>
+    <div id="mobile-current-color" style="width:30px;height:30px;border-radius:50%;background:#000;border:2px solid #fff;box-shadow:var(--shadow-sm);flex-shrink:0;"></div>
+    <input type="color" id="mobile-color-input" value="#000000" onchange="setColor(this.value)" style="width:32px;height:32px;border:none;cursor:pointer;border-radius:4px;">
+  </div>
+  <div id="mobile-palette"></div>
+</div>
+
+<!-- ==================== Dialog Overlay ==================== -->
+<div id="dialog-overlay">
+  <div class="dialog" id="dialog-content"></div>
+</div>
+
+<!-- ==================== Toast ==================== -->
+<div id="toast"></div>
+
+<!-- ==================== PWA Install Prompt ==================== -->
+<div id="install-prompt">
+  <span>📱</span>
+  <span id="install-text">添加到主屏幕，像App一样使用！</span>
+  <button id="install-btn">安装</button>
+  <button class="close-prompt" id="install-close">✕</button>
+</div>
+
+<!-- ==================== Tutorial ==================== -->
+<div id="tutorial-overlay"></div>
+<div id="tutorial-highlight"></div>
+<div id="tutorial-bubble"></div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+// ================================================================
+//  I18N — 多语言文本
+// ================================================================
+const i18n = {
+  zh: {
+    appTitle: '像素画室',
+    loading: '加载中…',
+    loadingCat: '像素小黑正在赶来…',
+    btnNew: '🆕 新建', btnSave: '💾 保存', btnLoad: '📂 加载',
+    btnExport: '📤 导出', btnLang: '语言', btnHelp: '帮助',
+    toolPen: '画笔', toolEraser: '橡皮', toolFill: '填充',
+    toolPicker: '取色器', toolUndo: '撤销', toolRedo: '重做',
+    paletteTitle: '🎨 调色盘', palettePreset: '基础色',
+    paletteCustom: '自定义颜色', currentColor: '当前颜色',
+    gridOn: '网格', gridOff: '网格', zoom: '缩放', canvasSize: '尺寸',
+    dialogNewTitle: '新建画布', dialogNewSize: '画布尺寸 (8~128)',
+    dialogNewBg: '背景色', dialogNewBgWhite: '白色', dialogNewBgTransparent: '透明',
+    dialogConfirm: '确认', dialogCancel: '取消',
+    dialogSaveTitle: '保存画作', dialogSaveName: '作品名称',
+    dialogSavePlaceholder: '给我的像素画取个名字…',
+    dialogDeleteTitle: '删除确认',
+    dialogDeleteMsg: '确定要删除这幅画吗？此操作无法撤销。',
+    dialogNewWarning: '当前画作尚未保存，确定要新建吗？',
+    savedTitle: '我的画作',
+    savedEmpty: '还没有保存的画作哦~\n画一幅试试吧！',
+    savedLimit: '已达到保存上限（20幅），请删除旧画后再保存。',
+    savedStorageNote: '提示：画作保存在浏览器中\n清除数据会丢失哦',
+    toastSaved: '✅ 画作保存成功！',
+    toastExported: '✅ 图片导出成功！',
+    toastDeleted: '🗑️ 画作已删除',
+    toastLoaded: '✅ 画作已加载',
+    toastAutoSaved: '💾 已自动保存',
+    toastError: '❌ 操作失败，请重试',
+    toastNewCanvas: '🆕 新画布已创建',
+    tutorialTitle: '欢迎来到像素画室！🐱',
+    tutorialStep1: '① 绘画工具：画笔✏️涂色、橡皮🧹擦除、填充🪣一键填色、取色器💉吸取颜色',
+    tutorialStep2: '② 调色盘：点击下方色块选颜色，或点击取色器按钮自选任意颜色',
+    tutorialStep3: '③ 画布：在格子上点击或拖拽来画画吧！每个格子代表一个像素',
+    tutorialStep4: '④ 撤销/重做：画错了？点↩️撤销，点↪️重做。快捷键 Ctrl+Z / Ctrl+Y',
+    tutorialStep5: '⑤ 视图控制：底栏可以缩放画布（400%~1600%）和开关网格线',
+    tutorialStep6: '⑥ 保存画作：点💾保存，取名后存入浏览器，下次打开还能继续画',
+    tutorialStep7: '⑦ 加载画作：点📂加载，查看和打开之前保存的所有画作',
+    tutorialStep8: '⑧ 新建画布：点🆕新建，可自定义尺寸（8~128像素），创作不同大小的作品',
+    tutorialStep9: '⑨ 导出图片：点📤导出，画作会以PNG格式下载到你的设备',
+    tutorialStep10: '⑩ 更多功能：🌐切换中英文 | 快捷键P/E/F/I切换工具 | G切换网格',
+    tutorialSkip: '跳过教程', tutorialNext: '下一步', tutorialDone: '开始画吧！🐱',
+    delete: '删除', load: '加载',
+    installTitle: '安装像素画室',
+    installDesc: '添加到主屏幕，像App一样使用！',
+    installBtn: '安装',
+    installLater: '稍后',
+    paletteWarm: '暖色系', paletteNature: '自然色',
+  },
+  en: {
+    appTitle: 'Pixel Studio',
+    loading: 'Loading...',
+    loadingCat: 'Pixel Kitty is on the way…',
+    btnNew: '🆕 New', btnSave: '💾 Save', btnLoad: '📂 Load',
+    btnExport: '📤 Export', btnLang: 'Language', btnHelp: 'Help',
+    toolPen: 'Pen', toolEraser: 'Eraser', toolFill: 'Fill',
+    toolPicker: 'Picker', toolUndo: 'Undo', toolRedo: 'Redo',
+    paletteTitle: '🎨 Palette', palettePreset: 'Basic Colors',
+    paletteCustom: 'Custom Color', currentColor: 'Current Color',
+    gridOn: 'Grid', gridOff: 'Grid', zoom: 'Zoom', canvasSize: 'Size',
+    dialogNewTitle: 'New Canvas', dialogNewSize: 'Canvas Size (8~128)',
+    dialogNewBg: 'Background', dialogNewBgWhite: 'White', dialogNewBgTransparent: 'Transparent',
+    dialogConfirm: 'Confirm', dialogCancel: 'Cancel',
+    dialogSaveTitle: 'Save Artwork', dialogSaveName: 'Artwork Name',
+    dialogSavePlaceholder: 'Name your pixel art...',
+    dialogDeleteTitle: 'Delete Confirmation',
+    dialogDeleteMsg: 'Are you sure you want to delete this artwork? This cannot be undone.',
+    dialogNewWarning: 'Current artwork is not saved. Are you sure you want to create a new one?',
+    savedTitle: 'My Artworks',
+    savedEmpty: 'No saved artworks yet~\nStart drawing one!',
+    savedLimit: 'Storage limit reached (20). Please delete some old artworks first.',
+    savedStorageNote: 'Note: Artworks are stored in your browser.\nClearing browser data will erase them.',
+    toastSaved: '✅ Artwork saved!',
+    toastExported: '✅ Image exported!',
+    toastDeleted: '🗑️ Artwork deleted',
+    toastLoaded: '✅ Artwork loaded',
+    toastAutoSaved: '💾 Auto-saved',
+    toastError: '❌ Operation failed, please retry',
+    toastNewCanvas: '🆕 New canvas created',
+    tutorialTitle: 'Welcome to Pixel Studio! 🐱',
+    tutorialStep1: '① Tools: Pen✏️ to draw, Eraser🧹 to remove, Fill🪣 to flood, Picker💉 to sample',
+    tutorialStep2: '② Palette: Click swatches to pick colors, or use the color picker for any color',
+    tutorialStep3: '③ Canvas: Click or drag on the grid to draw! Each square is one pixel',
+    tutorialStep4: '④ Undo/Redo: Made a mistake? Tap ↩️ to undo, ↪️ to redo. Keys: Ctrl+Z / Ctrl+Y',
+    tutorialStep5: '⑤ View: Use the bottom bar to zoom (400%~1600%) and toggle grid lines',
+    tutorialStep6: '⑥ Save: Tap 💾 Save, give it a name, stored in your browser for next time',
+    tutorialStep7: '⑦ Load: Tap 📂 Load to browse and open all your saved artworks',
+    tutorialStep8: '⑧ New Canvas: Tap 🆕 New to create a canvas with custom size (8~128 pixels)',
+    tutorialStep9: '⑨ Export: Tap 📤 Export to download your artwork as a PNG image file',
+    tutorialStep10: '⑩ More: 🌐 Toggle Chinese/English | Keys: P/E/F/I for tools | G for grid',
+    tutorialSkip: 'Skip', tutorialNext: 'Next', tutorialDone: 'Start Drawing! 🐱',
+    delete: 'Delete', load: 'Load',
+    installTitle: 'Install Pixel Studio',
+    installDesc: 'Add to home screen, use like a native app!',
+    installBtn: 'Install',
+    installLater: 'Later',
+    paletteWarm: 'Warm Colors', paletteNature: 'Nature Colors',
+  }
+};
+
+let lang = localStorage.getItem('pixelArt_lang') || 'zh';
+function t(key) { return i18n[lang]?.[key] || key; }
+function switchLang() {
+  lang = lang === 'zh' ? 'en' : 'zh';
+  localStorage.setItem('pixelArt_lang', lang);
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  updateAllTexts();
+  showToast(lang === 'zh' ? '已切换为中文' : 'Switched to English');
+}
+function updateAllTexts() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (el.tagName === 'INPUT' && el.type === 'checkbox') {
+      const span = el.nextElementSibling;
+      if (span) span.textContent = t(key);
+    } else if (el.hasAttribute('data-i18n-title')) {
+      el.title = t(el.getAttribute('data-i18n-title'));
+    } else {
+      el.textContent = t(key);
+    }
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    el.title = t(el.getAttribute('data-i18n-title'));
+  });
+  document.title = t('appTitle') + ' | Pixel Studio';
+  document.getElementById('loading-text').textContent = t('loadingCat');
+  const headerLogo = document.querySelector('#header .logo');
+  if (headerLogo) headerLogo.innerHTML = '<span>🐱</span> ' + t('appTitle');
+  renderPresetSwatches();
+}
+
+// ================================================================
+//  STATE — 应用状态
+// ================================================================
+const state = {
+  canvasSize: 64,
+  pixels: [],            // [row][col] → "#rrggbb" or null (transparent/white)
+  currentColor: '#000000',
+  currentTool: 'pen',
+  zoom: 8,
+  showGrid: true,
+  history: [],           // stack of pixel snapshots
+  historyIndex: -1,
+  currentWorkId: null,   // id of currently loaded saved work (null = unnamed)
+  bgColor: '#FFFFFF',    // canvas background
+};
+
+// ================================================================
+//  DOM REFS
+// ================================================================
+const $loading = document.getElementById('loading-screen');
+const $app = document.getElementById('app');
+const $mainCanvas = document.getElementById('main-canvas');
+const $canvasArea = document.getElementById('canvas-area');
+const $currentColorDisplay = document.getElementById('current-color-display');
+const $mobileColorDisplay = document.getElementById('mobile-current-color');
+const $customColorInput = document.getElementById('custom-color-input');
+const $mobileColorInput = document.getElementById('mobile-color-input');
+const $gridToggle = document.getElementById('grid-toggle');
+const $infoSize = document.getElementById('info-size');
+const $dialogOverlay = document.getElementById('dialog-overlay');
+const $dialogContent = document.getElementById('dialog-content');
+const $toast = document.getElementById('toast');
+const $tutorialOverlay = document.getElementById('tutorial-overlay');
+const $tutorialHighlight = document.getElementById('tutorial-highlight');
+const $tutorialBubble = document.getElementById('tutorial-bubble');
+const $mobilePalette = document.getElementById('mobile-palette');
+
+// ================================================================
+//  COLOR PALETTE
+// ================================================================
+const presetColors = {
+  basic:   ['#000000','#FFFFFF','#808080','#FF0000','#FF8800','#FFDD00','#00CC00','#0088FF','#8800CC','#8B4513','#FF69B4','#00CCCC','#FF4444','#4444FF','#228B22'],
+  warm:    ['#FFE4C4','#FFDAB9','#FFCBA4','#FFB088','#FF9A6C','#FFD700','#FFC107','#FF9800','#FF7F50','#FF6347','#FFD1DC','#FFB6C1','#FFC0CB','#FF91A4','#E8A850'],
+  nature:  ['#87CEEB','#5DADE2','#48C9B0','#52BE80','#27AE60','#F5DEB3','#DEB887','#D2B48C','#A0522D','#6B4226','#8FBC8F','#6B8E23','#556B2F','#4682B4','#708090'],
+};
+
+function renderPresetSwatches() {
+  ['preset-basic','preset-warm','preset-nature'].forEach(id => {
+    const container = document.getElementById(id);
+    if (!container) return;
+    container.innerHTML = '';
+    const key = id.replace('preset-', '');
+    const colors = presetColors[key] || [];
+    colors.forEach(c => {
+      const sw = document.createElement('div');
+      sw.className = 'color-swatch' + (c === state.currentColor ? ' selected' : '');
+      sw.style.background = c;
+      sw.title = c;
+      sw.onclick = () => setColor(c);
+      container.appendChild(sw);
+    });
+  });
+
+  // Mobile palette (shows basic colors only)
+  if ($mobilePalette) {
+    $mobilePalette.innerHTML = '';
+    presetColors.basic.forEach(c => {
+      const sw = document.createElement('div');
+      sw.className = 'color-swatch' + (c === state.currentColor ? ' selected' : '');
+      sw.style.background = c;
+      sw.style.width = '28px'; sw.style.height = '28px';
+      sw.onclick = () => setColor(c);
+      $mobilePalette.appendChild(sw);
+    });
+  }
+}
+
+function updateSwatchSelection() {
+  document.querySelectorAll('.color-swatch').forEach(s => {
+    s.classList.toggle('selected', s.style.background.toLowerCase() === state.currentColor.toLowerCase() || s.title?.toLowerCase() === state.currentColor.toLowerCase());
+  });
+}
+
+function setColor(color) {
+  state.currentColor = color;
+  $currentColorDisplay.style.background = color;
+  if ($mobileColorDisplay) $mobileColorDisplay.style.background = color;
+  $customColorInput.value = color;
+  if ($mobileColorInput) $mobileColorInput.value = color;
+  updateSwatchSelection();
+}
+
+// ================================================================
+//  CANVAS INIT & RENDERING
+// ================================================================
+function initPixels(size, bgColor) {
+  state.canvasSize = size;
+  state.bgColor = bgColor || '#FFFFFF';
+  state.pixels = [];
+  for (let r = 0; r < size; r++) {
+    state.pixels[r] = new Array(size).fill(null);
+  }
+  state.history = [];
+  state.historyIndex = -1;
+  state.currentWorkId = null;
+  saveHistory();
+}
+
+function resizeCanvas() {
+  const size = state.canvasSize * state.zoom;
+  $mainCanvas.width = size;
+  $mainCanvas.height = size;
+  $mainCanvas.style.width = size + 'px';
+  $mainCanvas.style.height = size + 'px';
+  $infoSize.textContent = state.canvasSize + '×' + state.canvasSize;
+}
+
+function renderCanvas() {
+  const ctx = $mainCanvas.getContext('2d');
+  const { canvasSize, pixels, zoom, showGrid, bgColor } = state;
+
+  // Background
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, canvasSize * zoom, canvasSize * zoom);
+
+  // Pixels
+  for (let r = 0; r < canvasSize; r++) {
+    for (let c = 0; c < canvasSize; c++) {
+      if (pixels[r][c]) {
+        ctx.fillStyle = pixels[r][c];
+        ctx.fillRect(c * zoom, r * zoom, zoom, zoom);
+      }
+    }
+  }
+
+  // Grid lines
+  if (showGrid && zoom >= 4) {
+    ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i <= canvasSize; i++) {
+      const pos = i * zoom + 0.5;
+      ctx.moveTo(pos, 0);
+      ctx.lineTo(pos, canvasSize * zoom);
+      ctx.moveTo(0, pos);
+      ctx.lineTo(canvasSize * zoom, pos);
+    }
+    ctx.stroke();
+  }
+}
+
+// ================================================================
+//  COORDINATE MAPPING
+// ================================================================
+function getPixelFromEvent(e) {
+  const rect = $mainCanvas.getBoundingClientRect();
+  const scaleX = $mainCanvas.width / rect.width;
+  const scaleY = $mainCanvas.height / rect.height;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  const x = (clientX - rect.left) * scaleX;
+  const y = (clientY - rect.top) * scaleY;
+  const col = Math.floor(x / state.zoom);
+  const row = Math.floor(y / state.zoom);
+  if (col < 0 || col >= state.canvasSize || row < 0 || row >= state.canvasSize) return null;
+  return { row, col };
+}
+
+// ================================================================
+//  TOOLS
+// ================================================================
+function switchTool(tool) {
+  state.currentTool = tool;
+  document.querySelectorAll('.tool-btn[data-tool]').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-tool') === tool);
+  });
+  if (tool === 'picker') {
+    $mainCanvas.style.cursor = 'crosshair';
+  } else {
+    $mainCanvas.style.cursor = 'crosshair';
+  }
+}
+
+function drawAt(row, col) {
+  if (state.currentTool === 'pen') {
+    if (state.pixels[row][col] !== state.currentColor) {
+      state.pixels[row][col] = state.currentColor;
+      return true;
+    }
+  } else if (state.currentTool === 'eraser') {
+    if (state.pixels[row][col] !== null) {
+      state.pixels[row][col] = null;
+      return true;
+    }
+  }
+  return false;
+}
+
+function useToolAt(row, col) {
+  if (state.currentTool === 'pen' || state.currentTool === 'eraser') {
+    return drawAt(row, col);
+  } else if (state.currentTool === 'fill') {
+    saveHistory();
+    floodFill(col, row, state.currentColor);
+    renderCanvas();
+    autoSave();
+    return true;
+  } else if (state.currentTool === 'picker') {
+    const c = state.pixels[row]?.[col];
+    if (c) setColor(c);
+    return false;
+  }
+  return false;
+}
+
+// ================================================================
+//  FLOOD FILL (BFS)
+// ================================================================
+function floodFill(startCol, startRow, newColor) {
+  const targetColor = state.pixels[startRow]?.[startCol];
+  // Treat null as "background" filling
+  const target = targetColor || null;
+  if (target === newColor) return;
+
+  const size = state.canvasSize;
+  const queue = [[startCol, startRow]];
+  const visited = new Set();
+  visited.add(startRow * size + startCol);
+
+  while (queue.length > 0) {
+    const [c, r] = queue.shift();
+    const current = state.pixels[r]?.[c] || null;
+    if (current !== target) continue;
+    state.pixels[r][c] = newColor;
+    // Four neighbors
+    const neighbors = [[c-1,r],[c+1,r],[c,r-1],[c,r+1]];
+    for (const [nc, nr] of neighbors) {
+      if (nc >= 0 && nc < size && nr >= 0 && nr < size) {
+        const key = nr * size + nc;
+        if (!visited.has(key)) {
+          visited.add(key);
+          queue.push([nc, nr]);
+        }
+      }
+    }
+  }
+}
+
+// ================================================================
+//  HISTORY (UNDO / REDO)
+// ================================================================
+function saveHistory() {
+  // Clone current pixels
+  const snapshot = state.pixels.map(row => [...row]);
+  // Remove any "future" states
+  state.history = state.history.slice(0, state.historyIndex + 1);
+  state.history.push(snapshot);
+  // Limit to 50
+  if (state.history.length > 50) state.history.shift();
+  state.historyIndex = state.history.length - 1;
+}
+
+function undo() {
+  if (state.historyIndex <= 0) return;
+  state.historyIndex--;
+  state.pixels = state.history[state.historyIndex].map(row => [...row]);
+  renderCanvas();
+  autoSave();
+}
+
+function redo() {
+  if (state.historyIndex >= state.history.length - 1) return;
+  state.historyIndex++;
+  state.pixels = state.history[state.historyIndex].map(row => [...row]);
+  renderCanvas();
+  autoSave();
+}
+
+// ================================================================
+//  ZOOM & GRID
+// ================================================================
+function setZoom(z) {
+  state.zoom = z;
+  resizeCanvas();
+  renderCanvas();
+  // Scroll canvas to center
+  $canvasArea.scrollTo({
+    left: ($mainCanvas.width - $canvasArea.clientWidth) / 2,
+    top: ($mainCanvas.height - $canvasArea.clientHeight) / 2,
+  });
+  document.querySelectorAll('#footer .zoom-btns button').forEach(b => {
+    b.classList.toggle('current', parseInt(b.getAttribute('data-zoom')) === z);
+  });
+  autoSave();
+}
+
+function toggleGrid() {
+  state.showGrid = $gridToggle.checked;
+  renderCanvas();
+}
+
+// ================================================================
+//  EXPORT
+// ================================================================
+function exportPNG() {
+  const size = state.canvasSize;
+  const exportCanvas = document.createElement('canvas');
+  exportCanvas.width = size;
+  exportCanvas.height = size;
+  const ctx = exportCanvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = state.bgColor;
+  ctx.fillRect(0, 0, size, size);
+
+  // Pixels at 1x scale
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      if (state.pixels[r]?.[c]) {
+        ctx.fillStyle = state.pixels[r][c];
+        ctx.fillRect(c, r, 1, 1);
+      }
+    }
+  }
+
+  // Download
+  const now = new Date();
+  const ts = now.getFullYear() +
+    String(now.getMonth()+1).padStart(2,'0') +
+    String(now.getDate()).padStart(2,'0') + '-' +
+    String(now.getHours()).padStart(2,'0') +
+    String(now.getMinutes()).padStart(2,'0') +
+    String(now.getSeconds()).padStart(2,'0');
+  exportCanvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'pixel-art-' + ts + '.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(t('toastExported'));
+  }, 'image/png');
+}
+
+// ================================================================
+//  SAVE / LOAD (localStorage)
+// ================================================================
+function autoSave() {
+  try {
+    const data = {
+      canvasSize: state.canvasSize,
+      pixels: state.pixels,
+      currentColor: state.currentColor,
+      zoom: state.zoom,
+      showGrid: state.showGrid,
+      bgColor: state.bgColor,
+      currentWorkId: state.currentWorkId,
+      history: state.history,
+      historyIndex: state.historyIndex,
+    };
+    localStorage.setItem('pixelArt_autoSave', JSON.stringify(data));
+  } catch(e) { /* storage full, ignore */ }
+}
+
+function restoreAutoSave() {
+  try {
+    const raw = localStorage.getItem('pixelArt_autoSave');
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    state.canvasSize = data.canvasSize || 64;
+    state.pixels = data.pixels || [];
+    state.currentColor = data.currentColor || '#000000';
+    state.zoom = data.zoom || 8;
+    state.showGrid = data.showGrid !== false;
+    state.bgColor = data.bgColor || '#FFFFFF';
+    state.currentWorkId = data.currentWorkId || null;
+    state.history = data.history || [];
+    state.historyIndex = data.historyIndex ?? -1;
+    return true;
+  } catch(e) { return false; }
+}
+
+function saveWork() {
+  // Check limit
+  const works = getSavedWorks();
+  if (works.length >= 20 && !state.currentWorkId) {
+    showToast(t('savedLimit'));
+    return;
+  }
+
+  // Show name dialog
+  showDialog(t('dialogSaveTitle'), `
+    <label data-i18n="dialogSaveName">${t('dialogSaveName')}</label>
+    <input type="text" id="save-name-input" placeholder="${t('dialogSavePlaceholder')}" value="${state.currentWorkId ? (works.find(w=>w.id===state.currentWorkId)?.name||'') : ''}" maxlength="30">
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="closeDialog()" data-i18n="dialogCancel">${t('dialogCancel')}</button>
+      <button class="btn-confirm" id="save-confirm-btn" data-i18n="dialogConfirm">${t('dialogConfirm')}</button>
+    </div>
+  `, () => {
+    const nameInput = document.getElementById('save-name-input');
+    const confirmBtn = document.getElementById('save-confirm-btn');
+    if (!nameInput) return;
+    nameInput.focus();
+    nameInput.select();
+    confirmBtn.onclick = () => doSave(nameInput.value.trim());
+    nameInput.onkeydown = (e) => { if (e.key === 'Enter') doSave(nameInput.value.trim()); };
+  });
+}
+
+function doSave(name) {
+  if (!name) name = '未命名 ' + new Date().toLocaleDateString('zh-CN');
+  const works = getSavedWorks();
+  const id = state.currentWorkId || String(Date.now());
+  const existing = works.findIndex(w => w.id === id);
+
+  const work = {
+    id,
+    name,
+    canvasSize: state.canvasSize,
+    pixels: state.pixels,
+    bgColor: state.bgColor,
+    createdAt: existing >= 0 ? works[existing].createdAt : new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  if (existing >= 0) works[existing] = work;
+  else works.push(work);
+
+  localStorage.setItem('pixelArt_savedWorks', JSON.stringify(works));
+  state.currentWorkId = id;
+  autoSave();
+  closeDialog();
+  showToast(t('toastSaved'));
+}
+
+function getSavedWorks() {
+  try {
+    return JSON.parse(localStorage.getItem('pixelArt_savedWorks') || '[]');
+  } catch(e) { return []; }
+}
+
+function openLoadDialog() {
+  const works = getSavedWorks();
+  let html = '<h3 data-i18n="savedTitle">' + t('savedTitle') + '</h3>';
+
+  if (works.length === 0) {
+    html += '<p style="text-align:center;color:var(--text-light);white-space:pre-line;" data-i18n="savedEmpty">' + t('savedEmpty') + '</p>';
+  } else {
+    html += '<div id="saved-list">';
+    works.slice().reverse().forEach(w => {
+      const date = new Date(w.updatedAt);
+      const dateStr = date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+      html += '<div class="saved-item" data-id="' + w.id + '">' +
+        '<canvas width="40" height="40" class="thumb"></canvas>' +
+        '<div class="info"><div class="name">' + escHtml(w.name) + '</div>' +
+        '<div class="date">' + w.canvasSize + '×' + w.canvasSize + ' · ' + dateStr + '</div></div>' +
+        '<button class="del-btn" data-del="' + w.id + '" data-i18n="delete">' + t('delete') + '</button>' +
+        '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div class="btn-row"><button class="btn-cancel" onclick="closeDialog()" data-i18n="dialogCancel">' + t('dialogCancel') + '</button></div>';
+
+  showDialog('', html, () => {
+    // Render thumbnails
+    document.querySelectorAll('.saved-item').forEach(item => {
+      const wid = item.getAttribute('data-id');
+      const w = works.find(x => x.id === wid);
+      if (!w) return;
+      const thumb = item.querySelector('canvas.thumb');
+      if (!thumb) return;
+      renderThumb(thumb, w);
+      // Load on item click (but not on del button)
+      item.onclick = (e) => {
+        if (e.target.closest('.del-btn')) return;
+        loadWork(wid);
+      };
+    });
+    // Delete buttons
+    document.querySelectorAll('.del-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        deleteWork(btn.getAttribute('data-del'));
+      };
+    });
+  });
+}
+
+function renderThumb(canvas, work) {
+  const ctx = canvas.getContext('2d');
+  const size = work.canvasSize;
+  const scale = 40 / size;
+  ctx.fillStyle = work.bgColor || '#FFFFFF';
+  ctx.fillRect(0, 0, 40, 40);
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      if (work.pixels[r]?.[c]) {
+        ctx.fillStyle = work.pixels[r][c];
+        ctx.fillRect(c * scale, r * scale, Math.ceil(scale), Math.ceil(scale));
+      }
+    }
+  }
+}
+
+function loadWork(id) {
+  const works = getSavedWorks();
+  const w = works.find(x => x.id === id);
+  if (!w) return;
+  state.canvasSize = w.canvasSize;
+  state.pixels = w.pixels;
+  state.bgColor = w.bgColor || '#FFFFFF';
+  state.currentWorkId = w.id;
+  state.history = [state.pixels.map(row => [...row])];
+  state.historyIndex = 0;
+  state.zoom = Math.max(4, Math.min(16, Math.floor(512 / state.canvasSize)));
+  $gridToggle.checked = state.showGrid;
+  resizeCanvas();
+  renderCanvas();
+  setZoom(state.zoom);
+  closeDialog();
+  autoSave();
+  showToast(t('toastLoaded'));
+}
+
+function deleteWork(id) {
+  showDialog(t('dialogDeleteTitle'), `
+    <p style="text-align:center;" data-i18n="dialogDeleteMsg">${t('dialogDeleteMsg')}</p>
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="closeDialog()" data-i18n="dialogCancel">${t('dialogCancel')}</button>
+      <button class="btn-danger" id="delete-confirm-btn" data-i18n="delete">${t('delete')}</button>
+    </div>
+  `, () => {
+    document.getElementById('delete-confirm-btn').onclick = () => {
+      const works = getSavedWorks().filter(w => w.id !== id);
+      localStorage.setItem('pixelArt_savedWorks', JSON.stringify(works));
+      if (state.currentWorkId === id) state.currentWorkId = null;
+      autoSave();
+      closeDialog();
+      showToast(t('toastDeleted'));
+      // Refresh load dialog if open
+      setTimeout(() => openLoadDialog(), 300);
+    };
+  });
+}
+
+// ================================================================
+//  NEW CANVAS
+// ================================================================
+function openNewDialog() {
+  showDialog(t('dialogNewTitle'), `
+    <label data-i18n="dialogNewSize">${t('dialogNewSize')}</label>
+    <input type="number" id="new-size-input" value="${state.canvasSize}" min="8" max="128" step="1">
+    <label data-i18n="dialogNewBg">${t('dialogNewBg')}</label>
+    <select id="new-bg-select">
+      <option value="white" data-i18n="dialogNewBgWhite">${t('dialogNewBgWhite')}</option>
+      <option value="transparent" data-i18n="dialogNewBgTransparent">${t('dialogNewBgTransparent')}</option>
+    </select>
+    <p style="font-size:11px;color:var(--text-light);text-align:center;" data-i18n="dialogNewWarning">${t('dialogNewWarning')}</p>
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="closeDialog()" data-i18n="dialogCancel">${t('dialogCancel')}</button>
+      <button class="btn-confirm" id="new-confirm-btn" data-i18n="dialogConfirm">${t('dialogConfirm')}</button>
+    </div>
+  `, () => {
+    document.getElementById('new-confirm-btn').onclick = () => {
+      let newSize = parseInt(document.getElementById('new-size-input').value);
+      if (isNaN(newSize) || newSize < 8) newSize = 8;
+      if (newSize > 128) newSize = 128;
+      const bg = document.getElementById('new-bg-select').value === 'white' ? '#FFFFFF' : 'transparent';
+      initPixels(newSize, bg === 'transparent' ? '#FFFFFF' : bg);
+      // Note: transparent bg just renders as white grid but exports with white bg for simplicity
+      state.zoom = Math.max(4, Math.min(16, Math.floor(512 / newSize)));
+      resizeCanvas();
+      renderCanvas();
+      setZoom(state.zoom);
+      closeDialog();
+      autoSave();
+      showToast(t('toastNewCanvas'));
+    };
+  });
+}
+
+// ================================================================
+//  DIALOG HELPERS
+// ================================================================
+function showDialog(title, bodyHtml, onReady) {
+  let html = '';
+  if (title) html += '<h3>' + title + '</h3>';
+  html += bodyHtml;
+  $dialogContent.innerHTML = html;
+  $dialogOverlay.classList.add('show');
+  if (onReady) setTimeout(onReady, 50);
+}
+
+function closeDialog() {
+  $dialogOverlay.classList.remove('show');
+}
+
+$dialogOverlay.addEventListener('click', (e) => {
+  if (e.target === $dialogOverlay) closeDialog();
+});
+
+// ================================================================
+//  TOAST
+// ================================================================
+let toastTimer = null;
+function showToast(msg) {
+  $toast.textContent = msg;
+  $toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $toast.classList.remove('show'), 2000);
+}
+
+// ================================================================
+//  UTILS
+// ================================================================
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ================================================================
+//  DRAWING EVENT HANDLERS
+// ================================================================
+let isDrawing = false;
+let lastDrawnPixel = null;
+
+function startDraw(e) {
+  e.preventDefault();
+  const pos = getPixelFromEvent(e);
+  if (!pos) return;
+  isDrawing = true;
+  lastDrawnPixel = pos;
+  if (state.currentTool === 'pen' || state.currentTool === 'eraser') {
+    saveHistory();
+  }
+  useToolAt(pos.row, pos.col);
+  renderCanvas();
+}
+
+function moveDraw(e) {
+  if (!isDrawing) return;
+  e.preventDefault();
+  const pos = getPixelFromEvent(e);
+  if (!pos) return;
+  // Skip if same pixel as last (improves performance)
+  if (lastDrawnPixel && lastDrawnPixel.row === pos.row && lastDrawnPixel.col === pos.col) return;
+  lastDrawnPixel = pos;
+  if (state.currentTool === 'pen' || state.currentTool === 'eraser') {
+    drawAt(pos.row, pos.col);
+    renderCanvas();
+  }
+}
+
+function endDraw(e) {
+  if (!isDrawing) return;
+  isDrawing = false;
+  lastDrawnPixel = null;
+  if (state.currentTool === 'pen' || state.currentTool === 'eraser') {
+    renderCanvas();
+    autoSave();
+  }
+}
+
+// Mouse events
+$mainCanvas.addEventListener('mousedown', startDraw);
+$mainCanvas.addEventListener('mousemove', moveDraw);
+$mainCanvas.addEventListener('mouseup', endDraw);
+$mainCanvas.addEventListener('mouseleave', endDraw);
+
+// Touch events
+$mainCanvas.addEventListener('touchstart', startDraw, { passive: false });
+$mainCanvas.addEventListener('touchmove', moveDraw, { passive: false });
+$mainCanvas.addEventListener('touchend', endDraw);
+$mainCanvas.addEventListener('touchcancel', endDraw);
+
+// Single click for fill/picker
+$mainCanvas.addEventListener('click', (e) => {
+  // Only handle single clicks for tools that don't use drag
+  if (state.currentTool === 'fill' || state.currentTool === 'picker') {
+    const pos = getPixelFromEvent(e);
+    if (pos) {
+      useToolAt(pos.row, pos.col);
+      renderCanvas();
+      if (state.currentTool === 'fill') autoSave();
+    }
+  }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+    if (e.key === 'z' && e.shiftKey) { e.preventDefault(); redo(); }
+    if (e.key === 'y') { e.preventDefault(); redo(); }
+    if (e.key === 's') { e.preventDefault(); saveWork(); }
+    if (e.key === 'e') { e.preventDefault(); exportPNG(); }
+    return;
+  }
+  // Tool shortcuts
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  switch(e.key.toLowerCase()) {
+    case 'p': switchTool('pen'); break;
+    case 'e': switchTool('eraser'); break;
+    case 'f': switchTool('fill'); break;
+    case 'i': switchTool('picker'); break;
+    case 'g': $gridToggle.checked = !$gridToggle.checked; toggleGrid(); break;
+  }
+});
+
+// ================================================================
+//  TUTORIAL
+// ================================================================
+const tutorialSteps = [
+  { selector: '#toolbar, #mobile-toolbar', textKey: 'tutorialStep1', position: 'right' },
+  { selector: '#palette-panel, #mobile-palette', textKey: 'tutorialStep2', position: 'left' },
+  { selector: '#canvas-area', textKey: 'tutorialStep3', position: 'center' },
+  { selector: '#toolbar button[data-i18n-title=\"toolUndo\"], #mobile-toolbar button[data-i18n-title=\"toolUndo\"]', textKey: 'tutorialStep4', position: 'right' },
+  { selector: '#footer', textKey: 'tutorialStep5', position: 'top' },
+  { selector: '#header .actions button[data-i18n=\"btnSave\"]', textKey: 'tutorialStep6', position: 'bottom' },
+  { selector: '#header .actions button[data-i18n=\"btnLoad\"]', textKey: 'tutorialStep7', position: 'bottom' },
+  { selector: '#header .actions button[data-i18n=\"btnNew\"]', textKey: 'tutorialStep8', position: 'bottom' },
+  { selector: '#header .actions button.primary', textKey: 'tutorialStep9', position: 'bottom' },
+  { selector: '#header .actions button.icon-btn', textKey: 'tutorialStep10', position: 'bottom' },
+];
+
+let tutorialStep = 0;
+
+function startTutorial() {
+  tutorialStep = 0;
+  $tutorialOverlay.classList.add('show');
+  showTutorialStep();
+}
+
+function showTutorialStep() {
+  if (tutorialStep >= tutorialSteps.length) {
+    endTutorial();
+    return;
+  }
+  const step = tutorialSteps[tutorialStep];
+  const selector = step.selector.split(',')[0].trim(); // Use first selector
+  const target = document.querySelector(selector);
+
+  if (!target) {
+    // Fallback: try mobile version
+    const mobileSel = step.selector.split(',')[1]?.trim();
+    const mobileTarget = mobileSel ? document.querySelector(mobileSel) : null;
+    if (mobileTarget) {
+      positionTutorial(mobileTarget, step);
+    } else {
+      tutorialStep++;
+      showTutorialStep();
+    }
+    return;
+  }
+  positionTutorial(target, step);
+}
+
+function positionTutorial(target, step) {
+  const rect = target.getBoundingClientRect();
+  const overlayRect = $tutorialOverlay.getBoundingClientRect();
+
+  // Highlight
+  $tutorialHighlight.style.display = 'block';
+  $tutorialHighlight.style.top = rect.top + 'px';
+  $tutorialHighlight.style.left = rect.left + 'px';
+  $tutorialHighlight.style.width = rect.width + 'px';
+  $tutorialHighlight.style.height = rect.height + 'px';
+
+  // Bubble
+  const stepNum = tutorialStep + 1;
+  const totalSteps = tutorialSteps.length;
+  $tutorialBubble.innerHTML = `
+    <div style="font-size:12px;color:var(--text-light);margin-bottom:2px;">${t('tutorialTitle')} · ${stepNum}/${totalSteps}</div>
+    <p>${t(step.textKey)}</p>
+    <div class="btn-row">
+      <button class="btn-skip" id="tut-skip" data-i18n="tutorialSkip">${t('tutorialSkip')}</button>
+      <button class="btn-next" id="tut-next">${tutorialStep < totalSteps - 1 ? t('tutorialNext') : t('tutorialDone')}</button>
+    </div>
+  `;
+  $tutorialBubble.classList.add('show');
+
+  // Position bubble based on step.position
+  let bubbleTop, bubbleLeft;
+  const bubbleEl = $tutorialBubble;
+  const bubbleW = 300;
+  const bubbleH = 150;
+
+  switch(step.position) {
+    case 'right':
+      bubbleTop = rect.top + rect.height/2 - bubbleH/2;
+      bubbleLeft = rect.right + 16;
+      break;
+    case 'left':
+      bubbleTop = rect.top + rect.height/2 - bubbleH/2;
+      bubbleLeft = rect.left - bubbleW - 16;
+      break;
+    case 'bottom':
+      bubbleTop = rect.bottom + 16;
+      bubbleLeft = rect.left + rect.width/2 - bubbleW/2;
+      break;
+    default: // center
+      bubbleTop = rect.top + rect.height/2 - bubbleH/2;
+      bubbleLeft = rect.left + rect.width/2 - bubbleW/2;
+  }
+
+  // Clamp to viewport
+  bubbleTop = Math.max(10, Math.min(bubbleTop, window.innerHeight - bubbleH - 10));
+  bubbleLeft = Math.max(10, Math.min(bubbleLeft, window.innerWidth - bubbleW - 10));
+
+  $tutorialBubble.style.top = bubbleTop + 'px';
+  $tutorialBubble.style.left = bubbleLeft + 'px';
+
+  // Events
+  document.getElementById('tut-skip').onclick = endTutorial;
+  document.getElementById('tut-next').onclick = () => {
+    tutorialStep++;
+    showTutorialStep();
+  };
+}
+
+function endTutorial() {
+  $tutorialOverlay.classList.remove('show');
+  $tutorialHighlight.style.display = 'none';
+  $tutorialBubble.classList.remove('show');
+  localStorage.setItem('pixelArt_tutorialDone', 'true');
+}
+
+// ================================================================
+//  LOADING ANIMATION — Pixel Cat
+// ================================================================
+// Cat frames: 16x12 each, encoded as strings
+// chars: ' '=transparent, '1'=black, '2'=dark gray, '3'=white(eye), '4'=pink(ear)
+const catFrames = [
+  // Frame 1: front legs extended
+  [
+    '     1111      ',
+    '    111111     ',
+    '   11 1 11     ',
+    '  111 1 111    ',
+    ' 11111111111   ',
+    ' 11 4 114 11   ',
+    ' 11 3 113 11   ',
+    ' 1111 1 1111   ',
+    '  111   111    ',
+    '  111 1 111    ',
+    '  11    11     ',
+  ],
+  // Frame 2: mid stride 1
+  [
+    '     1111      ',
+    '    111111     ',
+    '   11 1  11    ',
+    '  111 1 111    ',
+    ' 11111111111   ',
+    ' 11 4 114 11   ',
+    ' 11 3 113 11   ',
+    ' 1111 1 1111   ',
+    '   1111111     ',
+    '  111   111    ',
+    '  11     11    ',
+    ' 11       11   ',
+  ],
+  // Frame 3: legs gathered
+  [
+    '     1111      ',
+    '    111111     ',
+    '   11 1  111   ',
+    '  111 1  111   ',
+    ' 111111111111  ',
+    ' 11 4 114 11   ',
+    ' 11 3 113 11   ',
+    ' 1111 1 1111   ',
+    '   1111111     ',
+    '   111 111     ',
+    '  11     11    ',
+  ],
+  // Frame 4: mid stride 2
+  [
+    '     1111      ',
+    '    111111     ',
+    '   11 1 11     ',
+    '  11111 111    ',
+    ' 11111111111   ',
+    ' 11 4 114 11   ',
+    ' 11 3 113 11   ',
+    '  11 1 1111    ',
+    '  11111 11     ',
+    '  111   111    ',
+    ' 11     11     ',
+  ],
+];
+
+let catFrameIndex = 0;
+let catX = -20;
+let catAnimId = null;
+let dustParticles = [];
+
+function generateDust() {
+  dustParticles = [];
+  for (let i = 0; i < 6; i++) {
+    dustParticles.push({
+      x: Math.random() * 16 - 4,
+      y: Math.random() * 4 - 2,
+      life: Math.random() * 0.5 + 0.3,
+      size: Math.random() * 2 + 1,
+    });
+  }
+}
+
+function animateCat() {
+  const canvas = document.getElementById('loading-cat-canvas');
+  if (!canvas || $loading.classList.contains('hidden')) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+  const groundY = 85;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Draw ground shadow
+  ctx.fillStyle = 'rgba(74,48,40,0.06)';
+  ctx.beginPath();
+  ctx.ellipse(catX + 8, groundY + 6, 20, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Draw dust particles
+  dustParticles.forEach(p => {
+    p.life -= 0.02;
+    p.y -= 0.3;
+    if (p.life <= 0) { p.life = Math.random() * 0.5 + 0.3; p.x = Math.random() * 14 - 2; p.y = Math.random() * 4 - 2; }
+    ctx.fillStyle = 'rgba(180,150,130,' + p.life + ')';
+    ctx.fillRect(catX + p.x, groundY + p.y, p.size, p.size);
+  });
+
+  // Draw cat frame
+  const frame = catFrames[catFrameIndex];
+  const pixelSize = 3;
+  const offsetX = catX;
+  const offsetY = groundY - frame.length * pixelSize;
+
+  for (let r = 0; r < frame.length; r++) {
+    for (let c = 0; c < frame[r].length; c++) {
+      const ch = frame[r][c];
+      if (ch === ' ') continue;
+      switch(ch) {
+        case '1': ctx.fillStyle = '#3A2A2A'; break; // dark body
+        case '2': ctx.fillStyle = '#5A4A4A'; break; // lighter shading
+        case '3': ctx.fillStyle = '#FFFFFF'; break; // eye white
+        case '4': ctx.fillStyle = '#F0A0A0'; break; // ear pink
+        default: ctx.fillStyle = '#3A2A2A';
+      }
+      ctx.fillRect(offsetX + c * pixelSize, offsetY + r * pixelSize, pixelSize, pixelSize);
+    }
+  }
+
+  // Advance frame
+  catX += 2.5;
+  if (catX > w + 20) {
+    catX = -20;
+    generateDust();
+  }
+
+  // Cycle through frames every 120ms
+  catFrameIndex = Math.floor(Date.now() / 120) % catFrames.length;
+
+  catAnimId = requestAnimationFrame(animateCat);
+}
+
+// ================================================================
+//  INIT
+// ================================================================
+function init() {
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+
+  // Restore auto-saved state or create new
+  const restored = restoreAutoSave();
+  if (!restored || !state.pixels || state.pixels.length === 0) {
+    initPixels(64, '#FFFFFF');
+  }
+
+  setColor(state.currentColor);
+  resizeCanvas();
+  renderCanvas();
+  renderPresetSwatches();
+  updateAllTexts();
+
+  // Update zoom button state
+  document.querySelectorAll('#footer .zoom-btns button').forEach(b => {
+    b.classList.toggle('current', parseInt(b.getAttribute('data-zoom')) === state.zoom);
+  });
+  $gridToggle.checked = state.showGrid;
+
+  // Auto zoom
+  setZoom(state.zoom);
+
+  // Loading animation
+  generateDust();
+  animateCat();
+
+  // Hide loading after a minimum display time
+  setTimeout(() => {
+    $loading.classList.add('hidden');
+    $app.classList.remove('hidden');
+    // Stop animation after fade
+    setTimeout(() => {
+      if (catAnimId) cancelAnimationFrame(catAnimId);
+    }, 600);
+  }, 1800);
+
+  // Auto-start tutorial for first-time users
+  const tutorialDone = localStorage.getItem('pixelArt_tutorialDone');
+  if (!tutorialDone) {
+    setTimeout(() => startTutorial(), 2500);
+  }
+
+  // PWA: Register Service Worker
+  registerSW();
+
+  // PWA: Install prompt
+  setupInstallPrompt();
+}
+
+// ================================================================
+//  PWA — Service Worker Registration
+// ================================================================
+function registerSW() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('✅ SW registered:', reg.scope))
+      .catch(err => console.log('SW registration skipped:', err.message));
+  }
+}
+
+// ================================================================
+//  PWA — Install Prompt
+// ================================================================
+let deferredPrompt = null;
+
+function setupInstallPrompt() {
+  const $installPrompt = document.getElementById('install-prompt');
+  const $installBtn = document.getElementById('install-btn');
+  const $installClose = document.getElementById('install-close');
+  const $installText = document.getElementById('install-text');
+
+  // Listen for beforeinstallprompt
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Show install prompt after loading
+    setTimeout(() => {
+      if ($installPrompt) {
+        $installPrompt.classList.add('show');
+        if ($installText) $installText.textContent = t('installDesc');
+        if ($installBtn) $installBtn.textContent = t('installBtn');
+      }
+    }, 3000);
+  });
+
+  // Install button
+  if ($installBtn) {
+    $installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log('Install outcome:', outcome);
+      deferredPrompt = null;
+      if ($installPrompt) $installPrompt.classList.remove('show');
+    });
+  }
+
+  // Close button
+  if ($installClose) {
+    $installClose.addEventListener('click', () => {
+      if ($installPrompt) $installPrompt.classList.remove('show');
+    });
+  }
+
+  // Hide prompt if app is already installed
+  window.addEventListener('appinstalled', () => {
+    if ($installPrompt) $installPrompt.classList.remove('show');
+    deferredPrompt = null;
+    showToast(lang === 'zh' ? '✅ 安装成功！' : '✅ Installed successfully!');
+  });
+}
+
+// Start the app
+init();
+</script>
+</body>
+</html>
