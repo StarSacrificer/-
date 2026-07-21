@@ -111,7 +111,7 @@ input { font-family: inherit; font-size: inherit; }
   transition: opacity 0.6s ease;
 }
 #loading-screen.hidden { opacity: 0; pointer-events: none; }
-#loading-cat-canvas { width: 200px; height: 120px; }
+#loading-cat-canvas { width: 300px; height: 130px; }
 #loading-text {
   margin-top: 12px; color: var(--text-light); font-size: 15px;
   animation: breathe 1.5s ease-in-out infinite;
@@ -402,6 +402,146 @@ input { font-family: inherit; font-size: inherit; }
   width: 28px; height: 28px; flex-shrink: 0;
 }
 
+/* ============ Back Button ============ */
+.back-btn {
+  display: flex; align-items: center; gap: 4px;
+  padding: 6px 12px; border-radius: var(--radius);
+  font-size: 14px; font-weight: 500;
+  background: var(--hover); color: var(--text);
+  border: 1px solid rgba(74,48,40,0.1);
+  white-space: nowrap; flex-shrink: 0;
+}
+.back-btn:hover { background: #FFDAB9; }
+
+/* ============ Brush Size Selector ============ */
+.brush-size-section {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; margin-top: 8px; padding-top: 8px;
+  border-top: 1px solid rgba(74,48,40,0.1);
+}
+.brush-size-label { font-size: 10px; color: var(--text-light); font-weight: 600; }
+.brush-sizes { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.mobile-brush-sizes { flex-direction: row; gap: 6px; align-items: center; }
+.brush-btn {
+  width: 44px; height: 44px; border-radius: var(--radius);
+  border: 2px solid rgba(74,48,40,0.15);
+  background: #fff; cursor: pointer; padding: 5px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s ease;
+}
+.brush-btn:hover { border-color: var(--primary); background: var(--hover); }
+.brush-btn.active {
+  border-color: var(--primary); background: var(--hover);
+  box-shadow: 0 0 0 2px rgba(232,168,80,0.3);
+}
+.brush-dot-grid {
+  display: grid; gap: 2px;
+}
+.brush-dot {
+  background: var(--text); border-radius: 1px;
+}
+.mobile-brush-sizes .brush-btn { width: 38px; height: 38px; padding: 4px; }
+
+/* ============ Gallery Page ============ */
+#gallery-page {
+  display: flex; flex-direction: column; height: 100%; width: 100%;
+}
+#gallery-page.hidden { display: none; }
+#gallery-header {
+  display: flex; align-items: center; justify-content: space-between;
+  height: var(--header-h); padding: 0 16px;
+  background: var(--panel-bg);
+  border-bottom: 1px solid rgba(74,48,40,0.08);
+  flex-shrink: 0;
+}
+#gallery-grid {
+  flex: 1; overflow-y: auto; padding: 16px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px; align-content: start;
+}
+.gallery-card {
+  background: var(--panel-bg); border-radius: var(--radius-lg);
+  padding: 10px; cursor: pointer; text-align: center;
+  border: 2px solid transparent; transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+.gallery-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.gallery-card canvas {
+  display: block; margin: 0 auto 8px;
+  border-radius: var(--radius-sm); border: 1px solid rgba(74,48,40,0.08);
+  image-rendering: pixelated; background: #fff;
+}
+.gallery-card .card-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gallery-card .card-info { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.gallery-card .card-actions { display: flex; gap: 4px; justify-content: center; margin-top: 6px; }
+.gallery-card .card-actions button {
+  padding: 3px 10px; border-radius: 10px; font-size: 11px;
+  border: 1px solid rgba(74,48,40,0.15); background: #fff;
+}
+.gallery-card .card-actions button:hover { background: var(--hover); }
+.gallery-card .card-actions button.del { color: var(--danger); border-color: var(--danger); }
+
+#gallery-empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; flex: 1; color: var(--text-light);
+}
+#gallery-empty.hidden { display: none; }
+#gallery-empty .empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.6; }
+#gallery-empty p { font-size: 16px; text-align: center; line-height: 1.6; }
+
+#gallery-new-btn-wrap {
+  padding: 12px 16px; flex-shrink: 0;
+  display: flex; justify-content: center;
+  background: var(--panel-bg);
+  border-top: 1px solid rgba(74,48,40,0.08);
+}
+#gallery-new-btn {
+  padding: 12px 48px; border-radius: 24px;
+  font-size: 16px; font-weight: 600;
+  background: var(--primary); color: #fff;
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 8px;
+}
+#gallery-new-btn:hover { background: var(--primary-dark); }
+
+/* Editor page visibility */
+#editor-page { display: flex; flex-direction: column; height: 100%; width: 100%; }
+#editor-page.hidden { display: none; }
+
+/* ============ Language Select Dialog ============ */
+#lang-select-overlay {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(74,48,40,0.5);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.4s ease;
+}
+#lang-select-overlay.hidden { opacity: 0; pointer-events: none; }
+.lang-dialog {
+  background: var(--bg); border-radius: var(--radius-xl);
+  padding: 32px 24px; text-align: center;
+  box-shadow: var(--shadow-md); max-width: 360px; width: 90%;
+}
+.lang-dialog h3 { font-size: 18px; margin-bottom: 20px; color: var(--text); }
+.lang-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.lang-option {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; border-radius: var(--radius);
+  border: 2px solid rgba(74,48,40,0.12); background: #fff;
+  cursor: pointer; transition: all 0.2s; text-align: left;
+}
+.lang-option:hover { border-color: var(--primary); background: var(--hover); transform: scale(1.02); }
+.lang-flag { font-size: 28px; }
+.lang-name { font-size: 16px; font-weight: 600; color: var(--text); }
+.lang-desc { font-size: 12px; color: var(--text-light); margin-left: auto; }
+.lang-hint { font-size: 11px; color: var(--text-light); }
+
+/* Preset buttons in dialog */
+.preset-btn {
+  padding: 4px 10px; border-radius: 12px; font-size: 12px;
+  border: 1px solid rgba(74,48,40,0.2); background: #fff; cursor: pointer;
+}
+.preset-btn:hover { background: var(--hover); border-color: var(--primary); }
+
 /* ============ Responsive ============ */
 @media (max-width: 768px) {
   :root { --header-h: 44px; --footer-h: 36px; }
@@ -430,15 +570,37 @@ input { font-family: inherit; font-size: inherit; }
 
 <!-- ==================== Loading Screen ==================== -->
 <div id="loading-screen">
-  <canvas id="loading-cat-canvas" width="200" height="120"></canvas>
+  <canvas id="loading-cat-canvas" width="300" height="130"></canvas>
   <div id="loading-text">加载中…</div>
 </div>
 
-<!-- ==================== Main App ==================== -->
-<div id="app" class="hidden">
+<!-- ==================== Gallery Page (Home) ==================== -->
+<div id="gallery-page" class="hidden">
+  <header id="gallery-header">
+    <div class="logo"><span>🐱</span> 像素画室</div>
+    <div class="actions">
+      <button class="icon-btn" onclick="switchLang()" title="语言">🌐</button>
+      <button class="icon-btn" onclick="startTutorial()" title="帮助">❓</button>
+    </div>
+  </header>
+  <div id="gallery-grid"></div>
+  <div id="gallery-empty" class="hidden">
+    <div class="empty-icon">🎨</div>
+    <p data-i18n="galleryEmpty">还没有作品哦～ 点击下方按钮开始创作吧！</p>
+  </div>
+  <div id="gallery-new-btn-wrap">
+    <button id="gallery-new-btn" onclick="openNewFromGallery()">
+      <span>🆕</span> <span data-i18n="galleryNew">新建画作</span>
+    </button>
+  </div>
+</div>
+
+<!-- ==================== Editor Page ==================== -->
+<div id="editor-page" class="hidden">
 
   <!-- Header -->
   <header id="header">
+    <button class="back-btn" onclick="goToGallery()" title="返回画廊">← <span data-i18n="backToGallery">返回</span></button>
     <div class="logo"><span>🐱</span> 像素画室</div>
     <div class="actions">
       <button onclick="openNewDialog()" data-i18n="btnNew">🆕 新建</button>
@@ -455,23 +617,32 @@ input { font-family: inherit; font-size: inherit; }
     <!-- Desktop Toolbar -->
     <aside id="toolbar">
       <button class="tool-btn active" data-tool="pen" onclick="switchTool('pen')" data-i18n-title="toolPen">
-        ✏️<span class="tool-label">画笔</span>
+        ✏️<span class="tool-label" data-i18n="toolPen">画笔</span>
       </button>
       <button class="tool-btn" data-tool="eraser" onclick="switchTool('eraser')" data-i18n-title="toolEraser">
-        🧹<span class="tool-label">橡皮</span>
+        🧹<span class="tool-label" data-i18n="toolEraser">橡皮</span>
       </button>
       <button class="tool-btn" data-tool="fill" onclick="switchTool('fill')" data-i18n-title="toolFill">
-        🪣<span class="tool-label">填充</span>
+        🪣<span class="tool-label" data-i18n="toolFill">填充</span>
       </button>
       <button class="tool-btn" data-tool="picker" onclick="switchTool('picker')" data-i18n-title="toolPicker">
-        💉<span class="tool-label">取色</span>
+        💉<span class="tool-label" data-i18n="toolPicker">取色</span>
       </button>
       <button class="tool-btn" onclick="undo()" data-i18n-title="toolUndo">
-        ↩️<span class="tool-label">撤销</span>
+        ↩️<span class="tool-label" data-i18n="toolUndo">撤销</span>
       </button>
       <button class="tool-btn" onclick="redo()" data-i18n-title="toolRedo">
-        ↪️<span class="tool-label">重做</span>
+        ↪️<span class="tool-label" data-i18n="toolRedo">重做</span>
       </button>
+      <div class="brush-size-section">
+        <div class="brush-size-label" data-i18n="brushSize">笔刷大小</div>
+        <div class="brush-sizes" id="desktop-brush-sizes">
+          <button class="brush-btn active" data-size="1" onclick="setBrushSize(1)" title="1×1"></button>
+          <button class="brush-btn" data-size="2" onclick="setBrushSize(2)" title="2×2"></button>
+          <button class="brush-btn" data-size="3" onclick="setBrushSize(3)" title="3×3"></button>
+          <button class="brush-btn" data-size="4" onclick="setBrushSize(4)" title="4×4"></button>
+        </div>
+      </div>
     </aside>
 
     <!-- Canvas Area -->
@@ -532,6 +703,12 @@ input { font-family: inherit; font-size: inherit; }
     <button class="tool-btn" data-tool="picker" onclick="switchTool('picker')" data-i18n-title="toolPicker">💉</button>
     <button class="tool-btn" onclick="undo()" data-i18n-title="toolUndo">↩️</button>
     <button class="tool-btn" onclick="redo()" data-i18n-title="toolRedo">↪️</button>
+    <div class="mobile-brush-sizes" id="mobile-brush-sizes">
+      <button class="brush-btn active" data-size="1" onclick="setBrushSize(1)" title="1×1"></button>
+      <button class="brush-btn" data-size="2" onclick="setBrushSize(2)" title="2×2"></button>
+      <button class="brush-btn" data-size="3" onclick="setBrushSize(3)" title="3×3"></button>
+      <button class="brush-btn" data-size="4" onclick="setBrushSize(4)" title="4×4"></button>
+    </div>
     <div id="mobile-current-color" style="width:30px;height:30px;border-radius:50%;background:#000;border:2px solid #fff;box-shadow:var(--shadow-sm);flex-shrink:0;"></div>
     <input type="color" id="mobile-color-input" value="#000000" onchange="setColor(this.value)" style="width:32px;height:32px;border:none;cursor:pointer;border-radius:4px;">
   </div>
@@ -545,6 +722,26 @@ input { font-family: inherit; font-size: inherit; }
 
 <!-- ==================== Toast ==================== -->
 <div id="toast"></div>
+
+<!-- ==================== Language Select Dialog ==================== -->
+<div id="lang-select-overlay" class="hidden">
+  <div class="lang-dialog">
+    <h3 data-i18n="langSelectTitle">选择语言 / Choose Language</h3>
+    <div class="lang-options">
+      <button class="lang-option" data-lang="zh" onclick="selectLanguage('zh')">
+        <span class="lang-flag">🇨🇳</span>
+        <span class="lang-name">中文</span>
+        <span class="lang-desc">简体中文</span>
+      </button>
+      <button class="lang-option" data-lang="en" onclick="selectLanguage('en')">
+        <span class="lang-flag">🌍</span>
+        <span class="lang-name">English</span>
+        <span class="lang-desc">English</span>
+      </button>
+    </div>
+    <p class="lang-hint" data-i18n="langSelectHint">可以之后在设置中更改 / You can change this later</p>
+  </div>
+</div>
 
 <!-- ==================== PWA Install Prompt ==================== -->
 <div id="install-prompt">
@@ -579,6 +776,7 @@ const i18n = {
     dialogNewTitle: '新建画布', dialogNewSize: '画布尺寸 (8~128)',
     dialogNewBg: '背景色', dialogNewBgWhite: '白色', dialogNewBgTransparent: '透明',
     dialogConfirm: '确认', dialogCancel: '取消',
+    dialogNewWidth: '宽度', dialogNewHeight: '高度',
     dialogSaveTitle: '保存画作', dialogSaveName: '作品名称',
     dialogSavePlaceholder: '给我的像素画取个名字…',
     dialogDeleteTitle: '删除确认',
@@ -596,18 +794,26 @@ const i18n = {
     toastError: '❌ 操作失败，请重试',
     toastNewCanvas: '🆕 新画布已创建',
     tutorialTitle: '欢迎来到像素画室！🐱',
-    tutorialStep1: '① 绘画工具：画笔✏️涂色、橡皮🧹擦除、填充🪣一键填色、取色器💉吸取颜色',
-    tutorialStep2: '② 调色盘：点击下方色块选颜色，或点击取色器按钮自选任意颜色',
-    tutorialStep3: '③ 画布：在格子上点击或拖拽来画画吧！每个格子代表一个像素',
-    tutorialStep4: '④ 撤销/重做：画错了？点↩️撤销，点↪️重做。快捷键 Ctrl+Z / Ctrl+Y',
-    tutorialStep5: '⑤ 视图控制：底栏可以缩放画布（400%~1600%）和开关网格线',
-    tutorialStep6: '⑥ 保存画作：点💾保存，取名后存入浏览器，下次打开还能继续画',
-    tutorialStep7: '⑦ 加载画作：点📂加载，查看和打开之前保存的所有画作',
-    tutorialStep8: '⑧ 新建画布：点🆕新建，可自定义尺寸（8~128像素），创作不同大小的作品',
-    tutorialStep9: '⑨ 导出图片：点📤导出，画作会以PNG格式下载到你的设备',
-    tutorialStep10: '⑩ 更多功能：🌐切换中英文 | 快捷键P/E/F/I切换工具 | G切换网格',
+    tutorialStep1: '① 绘画工具：✏️画笔涂色 | 🧹橡皮擦除 | 🪣填充一键填色 | 💉取色器吸取颜色',
+    tutorialStep2: '② 笔刷大小：点击方块选择画笔/橡皮的大小（1×1 到 4×4），也可按键盘 1~4',
+    tutorialStep3: '③ 调色盘：点击色块选颜色，或点取色器自选任意颜色',
+    tutorialStep4: '④ 画布：在格子上点击或拖拽来画画！每个格子代表一个像素',
+    tutorialStep5: '⑤ 撤销/重做：画错了点↩️撤销、↪️重做。快捷键 Ctrl+Z / Ctrl+Y',
+    tutorialStep6: '⑥ 视图控制：底栏可缩放画布和开关网格线。快捷键 [ ] 缩放、G 切换网格',
+    tutorialStep7: '⑦ 保存画作：点💾保存，取名后存入浏览器，返回画廊可以看到',
+    tutorialStep8: '⑧ 加载画作：点📂查看所有保存的画作，点击即可继续编辑',
+    tutorialStep9: '⑨ 新建画布：点🆕新建，可自由设置宽度×高度（4~256），创作各种尺寸',
+    tutorialStep10: '⑩ 导出图片：点📤导出，画作以PNG格式下载到你的设备',
+    tutorialStep11: '⑪ 返回画廊：点←返回按钮回到画廊首页，查看所有作品',
+    tutorialStep12: '⑫ 更多：🌐切换中英文 | 快捷键P/E/F/I选工具 | 1-4笔刷 | Ctrl+Z撤销',
     tutorialSkip: '跳过教程', tutorialNext: '下一步', tutorialDone: '开始画吧！🐱',
     delete: '删除', load: '加载',
+    galleryEmpty: '还没有作品哦～\n点击下方按钮开始创作吧！',
+    galleryNew: '新建画作',
+    backToGallery: '返回',
+    langSelectTitle: '选择语言 / Choose Language',
+    langSelectHint: '可以之后在设置中更改',
+    brushSize: '笔刷',
     installTitle: '安装像素画室',
     installDesc: '添加到主屏幕，像App一样使用！',
     installBtn: '安装',
@@ -628,6 +834,7 @@ const i18n = {
     dialogNewTitle: 'New Canvas', dialogNewSize: 'Canvas Size (8~128)',
     dialogNewBg: 'Background', dialogNewBgWhite: 'White', dialogNewBgTransparent: 'Transparent',
     dialogConfirm: 'Confirm', dialogCancel: 'Cancel',
+    dialogNewWidth: 'Width', dialogNewHeight: 'Height',
     dialogSaveTitle: 'Save Artwork', dialogSaveName: 'Artwork Name',
     dialogSavePlaceholder: 'Name your pixel art...',
     dialogDeleteTitle: 'Delete Confirmation',
@@ -645,18 +852,26 @@ const i18n = {
     toastError: '❌ Operation failed, please retry',
     toastNewCanvas: '🆕 New canvas created',
     tutorialTitle: 'Welcome to Pixel Studio! 🐱',
-    tutorialStep1: '① Tools: Pen✏️ to draw, Eraser🧹 to remove, Fill🪣 to flood, Picker💉 to sample',
-    tutorialStep2: '② Palette: Click swatches to pick colors, or use the color picker for any color',
-    tutorialStep3: '③ Canvas: Click or drag on the grid to draw! Each square is one pixel',
-    tutorialStep4: '④ Undo/Redo: Made a mistake? Tap ↩️ to undo, ↪️ to redo. Keys: Ctrl+Z / Ctrl+Y',
-    tutorialStep5: '⑤ View: Use the bottom bar to zoom (400%~1600%) and toggle grid lines',
-    tutorialStep6: '⑥ Save: Tap 💾 Save, give it a name, stored in your browser for next time',
-    tutorialStep7: '⑦ Load: Tap 📂 Load to browse and open all your saved artworks',
-    tutorialStep8: '⑧ New Canvas: Tap 🆕 New to create a canvas with custom size (8~128 pixels)',
-    tutorialStep9: '⑨ Export: Tap 📤 Export to download your artwork as a PNG image file',
-    tutorialStep10: '⑩ More: 🌐 Toggle Chinese/English | Keys: P/E/F/I for tools | G for grid',
+    tutorialStep1: '① Tools: ✏️Pen to draw | 🧹Eraser to remove | 🪣Fill to flood | 💉Picker to sample',
+    tutorialStep2: '② Brush Size: Click squares to choose brush size (1×1 to 4×4). Keys 1-4 to switch',
+    tutorialStep3: '③ Palette: Click color swatches or use the color picker for any custom color',
+    tutorialStep4: '④ Canvas: Click or drag on the grid to draw! Each square = one pixel',
+    tutorialStep5: '⑤ Undo/Redo: Made a mistake? Tap ↩️ to undo, ↪️ to redo. Keys: Ctrl+Z / Ctrl+Y',
+    tutorialStep6: '⑥ View Controls: Bottom bar for zoom & grid toggle. Keys: [ ] zoom, G toggle grid',
+    tutorialStep7: '⑦ Save: Tap 💾 Save, name it, stored in your browser. Go back to Gallery to see it!',
+    tutorialStep8: '⑧ Load: Tap 📂 to browse and open all your previously saved artworks',
+    tutorialStep9: '⑨ New Canvas: Tap 🆕 New, set custom Width×Height (4~256) for any canvas size',
+    tutorialStep10: '⑩ Export: Tap 📤 Export to download your artwork as a PNG image file',
+    tutorialStep11: '⑪ Back to Gallery: Tap ← Back button to return to the Gallery and see all your works',
+    tutorialStep12: '⑫ More: 🌐 Toggle language | Keys: P/E/F/I tools, 1-4 brush, Ctrl+Z undo',
     tutorialSkip: 'Skip', tutorialNext: 'Next', tutorialDone: 'Start Drawing! 🐱',
     delete: 'Delete', load: 'Load',
+    galleryEmpty: 'No artworks yet~\nTap the button below to start creating!',
+    galleryNew: 'New Artwork',
+    backToGallery: 'Back',
+    langSelectTitle: '选择语言 / Choose Language',
+    langSelectHint: 'You can change this later in settings',
+    brushSize: 'Brush',
     installTitle: 'Install Pixel Studio',
     installDesc: 'Add to home screen, use like a native app!',
     installBtn: 'Install',
@@ -673,6 +888,27 @@ function switchLang() {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
   updateAllTexts();
   showToast(lang === 'zh' ? '已切换为中文' : 'Switched to English');
+}
+
+function selectLanguage(selectedLang) {
+  lang = selectedLang;
+  localStorage.setItem('pixelArt_lang', lang);
+  localStorage.setItem('pixelArt_langChosen', 'true');
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  updateAllTexts();
+  initBrushDots();
+  document.getElementById('lang-select-overlay').classList.add('hidden');
+  // Ensure we have a canvas and are in editor for the tutorial
+  if (!state.pixels || state.pixels.length === 0) {
+    initPixels(64, 64, '#FFFFFF');
+    state.zoom = 8;
+    resizeCanvas();
+    renderCanvas();
+    setZoom(state.zoom);
+  }
+  goToEditor();
+  // Start tutorial after transition
+  setTimeout(() => startTutorial(), 500);
 }
 function updateAllTexts() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -691,32 +927,40 @@ function updateAllTexts() {
   });
   document.title = t('appTitle') + ' | Pixel Studio';
   document.getElementById('loading-text').textContent = t('loadingCat');
+  // Update gallery header
+  const galleryLogo = document.querySelector('#gallery-header .logo');
+  if (galleryLogo) galleryLogo.innerHTML = '<span>🐱</span> ' + t('appTitle');
+  // Update editor header
   const headerLogo = document.querySelector('#header .logo');
   if (headerLogo) headerLogo.innerHTML = '<span>🐱</span> ' + t('appTitle');
   renderPresetSwatches();
+  // Refresh gallery if visible
+  if (state.currentPage === 'gallery') renderGallery();
 }
 
 // ================================================================
 //  STATE — 应用状态
 // ================================================================
 const state = {
-  canvasSize: 64,
+  canvasWidth: 64,
+  canvasHeight: 64,
   pixels: [],            // [row][col] → "#rrggbb" or null (transparent/white)
   currentColor: '#000000',
   currentTool: 'pen',
+  brushSize: 1,          // 1~4 pixels
   zoom: 8,
   showGrid: true,
   history: [],           // stack of pixel snapshots
   historyIndex: -1,
   currentWorkId: null,   // id of currently loaded saved work (null = unnamed)
   bgColor: '#FFFFFF',    // canvas background
+  currentPage: 'gallery', // 'gallery' | 'editor'
 };
 
 // ================================================================
 //  DOM REFS
 // ================================================================
 const $loading = document.getElementById('loading-screen');
-const $app = document.getElementById('app');
 const $mainCanvas = document.getElementById('main-canvas');
 const $canvasArea = document.getElementById('canvas-area');
 const $currentColorDisplay = document.getElementById('current-color-display');
@@ -791,40 +1035,43 @@ function setColor(color) {
 // ================================================================
 //  CANVAS INIT & RENDERING
 // ================================================================
-function initPixels(size, bgColor) {
-  state.canvasSize = size;
+function initPixels(width, height, bgColor) {
+  state.canvasWidth = width;
+  state.canvasHeight = height || width;
   state.bgColor = bgColor || '#FFFFFF';
   state.pixels = [];
-  for (let r = 0; r < size; r++) {
-    state.pixels[r] = new Array(size).fill(null);
+  for (let r = 0; r < state.canvasHeight; r++) {
+    state.pixels[r] = new Array(state.canvasWidth).fill(null);
   }
   state.history = [];
   state.historyIndex = -1;
   state.currentWorkId = null;
+  state.brushSize = 1;
   saveHistory();
 }
 
 function resizeCanvas() {
-  const size = state.canvasSize * state.zoom;
-  $mainCanvas.width = size;
-  $mainCanvas.height = size;
-  $mainCanvas.style.width = size + 'px';
-  $mainCanvas.style.height = size + 'px';
-  $infoSize.textContent = state.canvasSize + '×' + state.canvasSize;
+  const w = state.canvasWidth * state.zoom;
+  const h = state.canvasHeight * state.zoom;
+  $mainCanvas.width = w;
+  $mainCanvas.height = h;
+  $mainCanvas.style.width = w + 'px';
+  $mainCanvas.style.height = h + 'px';
+  $infoSize.textContent = state.canvasWidth + '×' + state.canvasHeight;
 }
 
 function renderCanvas() {
   const ctx = $mainCanvas.getContext('2d');
-  const { canvasSize, pixels, zoom, showGrid, bgColor } = state;
+  const { canvasWidth, canvasHeight, pixels, zoom, showGrid, bgColor } = state;
 
   // Background
   ctx.fillStyle = bgColor;
-  ctx.fillRect(0, 0, canvasSize * zoom, canvasSize * zoom);
+  ctx.fillRect(0, 0, canvasWidth * zoom, canvasHeight * zoom);
 
   // Pixels
-  for (let r = 0; r < canvasSize; r++) {
-    for (let c = 0; c < canvasSize; c++) {
-      if (pixels[r][c]) {
+  for (let r = 0; r < canvasHeight; r++) {
+    for (let c = 0; c < canvasWidth; c++) {
+      if (pixels[r]?.[c]) {
         ctx.fillStyle = pixels[r][c];
         ctx.fillRect(c * zoom, r * zoom, zoom, zoom);
       }
@@ -836,12 +1083,13 @@ function renderCanvas() {
     ctx.strokeStyle = 'rgba(0,0,0,0.08)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    for (let i = 0; i <= canvasSize; i++) {
-      const pos = i * zoom + 0.5;
-      ctx.moveTo(pos, 0);
-      ctx.lineTo(pos, canvasSize * zoom);
-      ctx.moveTo(0, pos);
-      ctx.lineTo(canvasSize * zoom, pos);
+    for (let i = 0; i <= canvasWidth; i++) {
+      ctx.moveTo(i * zoom + 0.5, 0);
+      ctx.lineTo(i * zoom + 0.5, canvasHeight * zoom);
+    }
+    for (let i = 0; i <= canvasHeight; i++) {
+      ctx.moveTo(0, i * zoom + 0.5);
+      ctx.lineTo(canvasWidth * zoom, i * zoom + 0.5);
     }
     ctx.stroke();
   }
@@ -860,7 +1108,7 @@ function getPixelFromEvent(e) {
   const y = (clientY - rect.top) * scaleY;
   const col = Math.floor(x / state.zoom);
   const row = Math.floor(y / state.zoom);
-  if (col < 0 || col >= state.canvasSize || row < 0 || row >= state.canvasSize) return null;
+  if (col < 0 || col >= state.canvasWidth || row < 0 || row >= state.canvasHeight) return null;
   return { row, col };
 }
 
@@ -872,26 +1120,63 @@ function switchTool(tool) {
   document.querySelectorAll('.tool-btn[data-tool]').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-tool') === tool);
   });
-  if (tool === 'picker') {
-    $mainCanvas.style.cursor = 'crosshair';
-  } else {
-    $mainCanvas.style.cursor = 'crosshair';
-  }
+}
+
+function setBrushSize(size) {
+  state.brushSize = size;
+  document.querySelectorAll('.brush-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.getAttribute('data-size')) === size);
+  });
+}
+
+function initBrushDots() {
+  document.querySelectorAll('.brush-btn').forEach(btn => {
+    const s = parseInt(btn.getAttribute('data-size'));
+    const grid = document.createElement('div');
+    grid.className = 'brush-dot-grid';
+    grid.style.gridTemplateColumns = 'repeat(' + s + ', 1fr)';
+    grid.style.gridTemplateRows = 'repeat(' + s + ', 1fr)';
+    grid.style.width = (s * 8 + (s - 1) * 2) + 'px';
+    grid.style.height = (s * 8 + (s - 1) * 2) + 'px';
+    for (let i = 0; i < s * s; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'brush-dot';
+      grid.appendChild(dot);
+    }
+    btn.innerHTML = '';
+    btn.appendChild(grid);
+  });
 }
 
 function drawAt(row, col) {
+  const b = state.brushSize;
+  let changed = false;
   if (state.currentTool === 'pen') {
-    if (state.pixels[row][col] !== state.currentColor) {
-      state.pixels[row][col] = state.currentColor;
-      return true;
+    for (let dr = 0; dr < b; dr++) {
+      for (let dc = 0; dc < b; dc++) {
+        const r = row + dr, c = col + dc;
+        if (r >= 0 && r < state.canvasHeight && c >= 0 && c < state.canvasWidth) {
+          if (state.pixels[r][c] !== state.currentColor) {
+            state.pixels[r][c] = state.currentColor;
+            changed = true;
+          }
+        }
+      }
     }
   } else if (state.currentTool === 'eraser') {
-    if (state.pixels[row][col] !== null) {
-      state.pixels[row][col] = null;
-      return true;
+    for (let dr = 0; dr < b; dr++) {
+      for (let dc = 0; dc < b; dc++) {
+        const r = row + dr, c = col + dc;
+        if (r >= 0 && r < state.canvasHeight && c >= 0 && c < state.canvasWidth) {
+          if (state.pixels[r][c] !== null) {
+            state.pixels[r][c] = null;
+            changed = true;
+          }
+        }
+      }
     }
   }
-  return false;
+  return changed;
 }
 
 function useToolAt(row, col) {
@@ -920,10 +1205,10 @@ function floodFill(startCol, startRow, newColor) {
   const target = targetColor || null;
   if (target === newColor) return;
 
-  const size = state.canvasSize;
+  const w = state.canvasWidth, h = state.canvasHeight;
   const queue = [[startCol, startRow]];
   const visited = new Set();
-  visited.add(startRow * size + startCol);
+  visited.add(startRow * w + startCol);
 
   while (queue.length > 0) {
     const [c, r] = queue.shift();
@@ -933,8 +1218,8 @@ function floodFill(startCol, startRow, newColor) {
     // Four neighbors
     const neighbors = [[c-1,r],[c+1,r],[c,r-1],[c,r+1]];
     for (const [nc, nr] of neighbors) {
-      if (nc >= 0 && nc < size && nr >= 0 && nr < size) {
-        const key = nr * size + nc;
+      if (nc >= 0 && nc < w && nr >= 0 && nr < h) {
+        const key = nr * w + nc;
         if (!visited.has(key)) {
           visited.add(key);
           queue.push([nc, nr]);
@@ -1001,19 +1286,19 @@ function toggleGrid() {
 //  EXPORT
 // ================================================================
 function exportPNG() {
-  const size = state.canvasSize;
+  const w = state.canvasWidth, h = state.canvasHeight;
   const exportCanvas = document.createElement('canvas');
-  exportCanvas.width = size;
-  exportCanvas.height = size;
+  exportCanvas.width = w;
+  exportCanvas.height = h;
   const ctx = exportCanvas.getContext('2d');
 
   // Background
   ctx.fillStyle = state.bgColor;
-  ctx.fillRect(0, 0, size, size);
+  ctx.fillRect(0, 0, w, h);
 
   // Pixels at 1x scale
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
+  for (let r = 0; r < h; r++) {
+    for (let c = 0; c < w; c++) {
       if (state.pixels[r]?.[c]) {
         ctx.fillStyle = state.pixels[r][c];
         ctx.fillRect(c, r, 1, 1);
@@ -1048,12 +1333,14 @@ function exportPNG() {
 function autoSave() {
   try {
     const data = {
-      canvasSize: state.canvasSize,
+      canvasWidth: state.canvasWidth,
+      canvasHeight: state.canvasHeight,
       pixels: state.pixels,
       currentColor: state.currentColor,
       zoom: state.zoom,
       showGrid: state.showGrid,
       bgColor: state.bgColor,
+      brushSize: state.brushSize,
       currentWorkId: state.currentWorkId,
       history: state.history,
       historyIndex: state.historyIndex,
@@ -1067,12 +1354,20 @@ function restoreAutoSave() {
     const raw = localStorage.getItem('pixelArt_autoSave');
     if (!raw) return false;
     const data = JSON.parse(raw);
-    state.canvasSize = data.canvasSize || 64;
+    // Backward compat: old format had canvasSize (single number)
+    if (data.canvasSize && !data.canvasWidth) {
+      state.canvasWidth = data.canvasSize;
+      state.canvasHeight = data.canvasSize;
+    } else {
+      state.canvasWidth = data.canvasWidth || 64;
+      state.canvasHeight = data.canvasHeight || 64;
+    }
     state.pixels = data.pixels || [];
     state.currentColor = data.currentColor || '#000000';
     state.zoom = data.zoom || 8;
     state.showGrid = data.showGrid !== false;
     state.bgColor = data.bgColor || '#FFFFFF';
+    state.brushSize = data.brushSize || 1;
     state.currentWorkId = data.currentWorkId || null;
     state.history = data.history || [];
     state.historyIndex = data.historyIndex ?? -1;
@@ -1090,11 +1385,11 @@ function saveWork() {
 
   // Show name dialog
   showDialog(t('dialogSaveTitle'), `
-    <label data-i18n="dialogSaveName">${t('dialogSaveName')}</label>
+    <label>${t('dialogSaveName')}</label>
     <input type="text" id="save-name-input" placeholder="${t('dialogSavePlaceholder')}" value="${state.currentWorkId ? (works.find(w=>w.id===state.currentWorkId)?.name||'') : ''}" maxlength="30">
     <div class="btn-row">
-      <button class="btn-cancel" onclick="closeDialog()" data-i18n="dialogCancel">${t('dialogCancel')}</button>
-      <button class="btn-confirm" id="save-confirm-btn" data-i18n="dialogConfirm">${t('dialogConfirm')}</button>
+      <button class="btn-cancel" onclick="closeDialog()">${t('dialogCancel')}</button>
+      <button class="btn-confirm" id="save-confirm-btn">${t('dialogConfirm')}</button>
     </div>
   `, () => {
     const nameInput = document.getElementById('save-name-input');
@@ -1116,9 +1411,11 @@ function doSave(name) {
   const work = {
     id,
     name,
-    canvasSize: state.canvasSize,
+    canvasWidth: state.canvasWidth,
+    canvasHeight: state.canvasHeight,
     pixels: state.pixels,
     bgColor: state.bgColor,
+    brushSize: state.brushSize,
     createdAt: existing >= 0 ? works[existing].createdAt : new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -1141,26 +1438,26 @@ function getSavedWorks() {
 
 function openLoadDialog() {
   const works = getSavedWorks();
-  let html = '<h3 data-i18n="savedTitle">' + t('savedTitle') + '</h3>';
+  let html = '<h3>' + t('savedTitle') + '</h3>';
 
   if (works.length === 0) {
-    html += '<p style="text-align:center;color:var(--text-light);white-space:pre-line;" data-i18n="savedEmpty">' + t('savedEmpty') + '</p>';
+    html += '<p style="text-align:center;color:var(--text-light);white-space:pre-line;">' + t('savedEmpty') + '</p>';
   } else {
     html += '<div id="saved-list">';
     works.slice().reverse().forEach(w => {
       const date = new Date(w.updatedAt);
       const dateStr = date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
       html += '<div class="saved-item" data-id="' + w.id + '">' +
-        '<canvas width="40" height="40" class="thumb"></canvas>' +
+        '<canvas width="50" height="50" class="thumb"></canvas>' +
         '<div class="info"><div class="name">' + escHtml(w.name) + '</div>' +
-        '<div class="date">' + w.canvasSize + '×' + w.canvasSize + ' · ' + dateStr + '</div></div>' +
-        '<button class="del-btn" data-del="' + w.id + '" data-i18n="delete">' + t('delete') + '</button>' +
+        '<div class="date">' + (w.canvasWidth || w.canvasSize || 64) + '×' + (w.canvasHeight || w.canvasSize || 64) + ' · ' + dateStr + '</div></div>' +
+        '<button class="del-btn" data-del="' + w.id + '">' + t('delete') + '</button>' +
         '</div>';
     });
     html += '</div>';
   }
 
-  html += '<div class="btn-row"><button class="btn-cancel" onclick="closeDialog()" data-i18n="dialogCancel">' + t('dialogCancel') + '</button></div>';
+  html += '<div class="btn-row"><button class="btn-cancel" onclick="closeDialog()">' + t('dialogCancel') + '</button></div>';
 
   showDialog('', html, () => {
     // Render thumbnails
@@ -1189,15 +1486,21 @@ function openLoadDialog() {
 
 function renderThumb(canvas, work) {
   const ctx = canvas.getContext('2d');
-  const size = work.canvasSize;
-  const scale = 40 / size;
+  // Backward compat: old format had canvasSize
+  const w = work.canvasWidth || work.canvasSize || 64;
+  const h = work.canvasHeight || work.canvasSize || 64;
+  const thumbSize = 50;
+  const scaleX = thumbSize / w, scaleY = thumbSize / h;
+  const scale = Math.min(scaleX, scaleY);
+  const offsetX = (thumbSize - w * scale) / 2;
+  const offsetY = (thumbSize - h * scale) / 2;
   ctx.fillStyle = work.bgColor || '#FFFFFF';
-  ctx.fillRect(0, 0, 40, 40);
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
+  ctx.fillRect(0, 0, thumbSize, thumbSize);
+  for (let r = 0; r < h; r++) {
+    for (let c = 0; c < w; c++) {
       if (work.pixels[r]?.[c]) {
         ctx.fillStyle = work.pixels[r][c];
-        ctx.fillRect(c * scale, r * scale, Math.ceil(scale), Math.ceil(scale));
+        ctx.fillRect(offsetX + c * scale, offsetY + r * scale, Math.ceil(scale), Math.ceil(scale));
       }
     }
   }
@@ -1207,13 +1510,16 @@ function loadWork(id) {
   const works = getSavedWorks();
   const w = works.find(x => x.id === id);
   if (!w) return;
-  state.canvasSize = w.canvasSize;
+  // Backward compat: old format had canvasSize
+  state.canvasWidth = w.canvasWidth || w.canvasSize || 64;
+  state.canvasHeight = w.canvasHeight || w.canvasSize || 64;
   state.pixels = w.pixels;
   state.bgColor = w.bgColor || '#FFFFFF';
+  state.brushSize = w.brushSize || 1;
   state.currentWorkId = w.id;
   state.history = [state.pixels.map(row => [...row])];
   state.historyIndex = 0;
-  state.zoom = Math.max(4, Math.min(16, Math.floor(512 / state.canvasSize)));
+  state.zoom = Math.max(4, Math.min(16, Math.floor(512 / Math.max(state.canvasWidth, state.canvasHeight))));
   $gridToggle.checked = state.showGrid;
   resizeCanvas();
   renderCanvas();
@@ -1225,10 +1531,10 @@ function loadWork(id) {
 
 function deleteWork(id) {
   showDialog(t('dialogDeleteTitle'), `
-    <p style="text-align:center;" data-i18n="dialogDeleteMsg">${t('dialogDeleteMsg')}</p>
+    <p style="text-align:center;">${t('dialogDeleteMsg')}</p>
     <div class="btn-row">
-      <button class="btn-cancel" onclick="closeDialog()" data-i18n="dialogCancel">${t('dialogCancel')}</button>
-      <button class="btn-danger" id="delete-confirm-btn" data-i18n="delete">${t('delete')}</button>
+      <button class="btn-cancel" onclick="closeDialog()">${t('dialogCancel')}</button>
+      <button class="btn-danger" id="delete-confirm-btn">${t('delete')}</button>
     </div>
   `, () => {
     document.getElementById('delete-confirm-btn').onclick = () => {
@@ -1249,33 +1555,48 @@ function deleteWork(id) {
 // ================================================================
 function openNewDialog() {
   showDialog(t('dialogNewTitle'), `
-    <label data-i18n="dialogNewSize">${t('dialogNewSize')}</label>
-    <input type="number" id="new-size-input" value="${state.canvasSize}" min="8" max="128" step="1">
-    <label data-i18n="dialogNewBg">${t('dialogNewBg')}</label>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div style="flex:1;"><label>${t('dialogNewWidth')}</label>
+      <input type="number" id="new-width-input" value="${state.canvasWidth}" min="4" max="256" step="1"></div>
+      <span style="font-size:20px;margin-top:18px;">×</span>
+      <div style="flex:1;"><label>${t('dialogNewHeight')}</label>
+      <input type="number" id="new-height-input" value="${state.canvasHeight}" min="4" max="256" step="1"></div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">
+      <button class="preset-btn" onclick="document.getElementById('new-width-input').value=16;document.getElementById('new-height-input').value=16;">16×16</button>
+      <button class="preset-btn" onclick="document.getElementById('new-width-input').value=32;document.getElementById('new-height-input').value=32;">32×32</button>
+      <button class="preset-btn" onclick="document.getElementById('new-width-input').value=64;document.getElementById('new-height-input').value=64;">64×64</button>
+      <button class="preset-btn" onclick="document.getElementById('new-width-input').value=128;document.getElementById('new-height-input').value=128;">128×128</button>
+    </div>
+    <label>${t('dialogNewBg')}</label>
     <select id="new-bg-select">
-      <option value="white" data-i18n="dialogNewBgWhite">${t('dialogNewBgWhite')}</option>
-      <option value="transparent" data-i18n="dialogNewBgTransparent">${t('dialogNewBgTransparent')}</option>
+      <option value="white">${t('dialogNewBgWhite')}</option>
+      <option value="transparent">${t('dialogNewBgTransparent')}</option>
     </select>
-    <p style="font-size:11px;color:var(--text-light);text-align:center;" data-i18n="dialogNewWarning">${t('dialogNewWarning')}</p>
+    <p style="font-size:11px;color:var(--text-light);text-align:center;">${t('dialogNewWarning')}</p>
     <div class="btn-row">
-      <button class="btn-cancel" onclick="closeDialog()" data-i18n="dialogCancel">${t('dialogCancel')}</button>
-      <button class="btn-confirm" id="new-confirm-btn" data-i18n="dialogConfirm">${t('dialogConfirm')}</button>
+      <button class="btn-cancel" onclick="closeDialog()">${t('dialogCancel')}</button>
+      <button class="btn-confirm" id="new-confirm-btn">${t('dialogConfirm')}</button>
     </div>
   `, () => {
     document.getElementById('new-confirm-btn').onclick = () => {
-      let newSize = parseInt(document.getElementById('new-size-input').value);
-      if (isNaN(newSize) || newSize < 8) newSize = 8;
-      if (newSize > 128) newSize = 128;
+      let nw = parseInt(document.getElementById('new-width-input').value);
+      let nh = parseInt(document.getElementById('new-height-input').value);
+      if (isNaN(nw) || nw < 4) nw = 4;
+      if (nw > 256) nw = 256;
+      if (isNaN(nh) || nh < 4) nh = 4;
+      if (nh > 256) nh = 256;
       const bg = document.getElementById('new-bg-select').value === 'white' ? '#FFFFFF' : 'transparent';
-      initPixels(newSize, bg === 'transparent' ? '#FFFFFF' : bg);
-      // Note: transparent bg just renders as white grid but exports with white bg for simplicity
-      state.zoom = Math.max(4, Math.min(16, Math.floor(512 / newSize)));
+      initPixels(nw, nh, bg === 'transparent' ? '#FFFFFF' : bg);
+      state.zoom = Math.max(4, Math.min(16, Math.floor(512 / Math.max(nw, nh))));
       resizeCanvas();
       renderCanvas();
       setZoom(state.zoom);
       closeDialog();
       autoSave();
       showToast(t('toastNewCanvas'));
+      // Switch to editor if coming from gallery
+      if (state.currentPage === 'gallery') goToEditor();
     };
   });
 }
@@ -1318,6 +1639,115 @@ function escHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+// ================================================================
+//  GALLERY & PAGE SWITCHING
+// ================================================================
+function renderGallery() {
+  const grid = document.getElementById('gallery-grid');
+  const empty = document.getElementById('gallery-empty');
+  const works = getSavedWorks().slice().reverse();
+  if (!grid) return;
+
+  if (works.length === 0) {
+    grid.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  grid.innerHTML = works.map(w => {
+    const wW = w.canvasWidth || w.canvasSize || 64;
+    const wH = w.canvasHeight || w.canvasSize || 64;
+    const date = new Date(w.updatedAt);
+    const dateStr = date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+    return '<div class="gallery-card" data-id="' + w.id + '">' +
+      '<canvas width="50" height="50" class="gallery-thumb"></canvas>' +
+      '<div class="card-name">' + escHtml(w.name) + '</div>' +
+      '<div class="card-info">' + wW + '×' + wH + ' · ' + dateStr + '</div>' +
+      '<div class="card-actions">' +
+        '<button class="edit-btn" data-edit="' + w.id + '">✏️</button>' +
+        '<button class="del" data-del="' + w.id + '">🗑️</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  // Render thumbnails
+  grid.querySelectorAll('.gallery-thumb').forEach(canvas => {
+    const card = canvas.closest('.gallery-card');
+    const wid = card.getAttribute('data-id');
+    const w = works.find(x => x.id === wid);
+    if (w) renderThumb(canvas, w);
+  });
+
+  // Click handlers
+  grid.querySelectorAll('.gallery-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.del') || e.target.closest('.edit-btn')) return;
+      const wid = card.getAttribute('data-id');
+      loadWork(wid);
+      goToEditor();
+    });
+  });
+  grid.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wid = btn.getAttribute('data-edit');
+      loadWork(wid);
+      goToEditor();
+    });
+  });
+  grid.querySelectorAll('.del').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wid = btn.getAttribute('data-del');
+      deleteWorkFromGallery(wid);
+    });
+  });
+}
+
+function deleteWorkFromGallery(id) {
+  showDialog(t('dialogDeleteTitle'), `
+    <p style="text-align:center;">${t('dialogDeleteMsg')}</p>
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="closeDialog()">${t('dialogCancel')}</button>
+      <button class="btn-danger" id="delete-confirm-btn">${t('delete')}</button>
+    </div>
+  `, () => {
+    document.getElementById('delete-confirm-btn').onclick = () => {
+      const works = getSavedWorks().filter(w => w.id !== id);
+      localStorage.setItem('pixelArt_savedWorks', JSON.stringify(works));
+      if (state.currentWorkId === id) state.currentWorkId = null;
+      closeDialog();
+      showToast(t('toastDeleted'));
+      renderGallery();
+    };
+  });
+}
+
+function openNewFromGallery() {
+  openNewDialog();
+}
+
+function goToEditor() {
+  state.currentPage = 'editor';
+  document.getElementById('gallery-page').classList.add('hidden');
+  document.getElementById('editor-page').classList.remove('hidden');
+  resizeCanvas();
+  renderCanvas();
+  setBrushSize(state.brushSize);
+  initBrushDots();
+  autoSave();
+}
+
+function goToGallery() {
+  state.currentPage = 'gallery';
+  autoSave();
+  document.getElementById('editor-page').classList.add('hidden');
+  document.getElementById('gallery-page').classList.remove('hidden');
+  renderGallery();
+  updateAllTexts();
 }
 
 // ================================================================
@@ -1392,13 +1822,14 @@ $mainCanvas.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey) {
     if (e.key === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
-    if (e.key === 'z' && e.shiftKey) { e.preventDefault(); redo(); }
-    if (e.key === 'y') { e.preventDefault(); redo(); }
-    if (e.key === 's') { e.preventDefault(); saveWork(); }
-    if (e.key === 'e') { e.preventDefault(); exportPNG(); }
+    else if (e.key === 'z' && e.shiftKey) { e.preventDefault(); redo(); }
+    else if (e.key === 'y') { e.preventDefault(); redo(); }
+    else if (e.key === 's') { e.preventDefault(); saveWork(); }
+    else if (e.key === 'e') { e.preventDefault(); exportPNG(); }
+    else if (e.key === 'n') { e.preventDefault(); openNewDialog(); }
     return;
   }
-  // Tool shortcuts
+  // Tool shortcuts (only in editor, not in input fields)
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   switch(e.key.toLowerCase()) {
     case 'p': switchTool('pen'); break;
@@ -1406,23 +1837,41 @@ document.addEventListener('keydown', (e) => {
     case 'f': switchTool('fill'); break;
     case 'i': switchTool('picker'); break;
     case 'g': $gridToggle.checked = !$gridToggle.checked; toggleGrid(); break;
+    case '1': setBrushSize(1); break;
+    case '2': setBrushSize(2); break;
+    case '3': setBrushSize(3); break;
+    case '4': setBrushSize(4); break;
+    case '[': setZoom(Math.max(2, state.zoom / 2)); break;
+    case ']': setZoom(Math.min(32, state.zoom * 2)); break;
+    case 'escape': if (state.currentPage === 'editor') goToGallery(); break;
   }
 });
+
+// Wheel zoom on canvas
+$mainCanvas.addEventListener('wheel', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    e.preventDefault();
+    if (e.deltaY < 0) setZoom(Math.min(32, state.zoom * 2));
+    else setZoom(Math.max(2, state.zoom / 2));
+  }
+}, { passive: false });
 
 // ================================================================
 //  TUTORIAL
 // ================================================================
 const tutorialSteps = [
   { selector: '#toolbar, #mobile-toolbar', textKey: 'tutorialStep1', position: 'right' },
-  { selector: '#palette-panel, #mobile-palette', textKey: 'tutorialStep2', position: 'left' },
-  { selector: '#canvas-area', textKey: 'tutorialStep3', position: 'center' },
-  { selector: '#toolbar button[data-i18n-title=\"toolUndo\"], #mobile-toolbar button[data-i18n-title=\"toolUndo\"]', textKey: 'tutorialStep4', position: 'right' },
-  { selector: '#footer', textKey: 'tutorialStep5', position: 'top' },
-  { selector: '#header .actions button[data-i18n=\"btnSave\"]', textKey: 'tutorialStep6', position: 'bottom' },
-  { selector: '#header .actions button[data-i18n=\"btnLoad\"]', textKey: 'tutorialStep7', position: 'bottom' },
-  { selector: '#header .actions button[data-i18n=\"btnNew\"]', textKey: 'tutorialStep8', position: 'bottom' },
-  { selector: '#header .actions button.primary', textKey: 'tutorialStep9', position: 'bottom' },
-  { selector: '#header .actions button.icon-btn', textKey: 'tutorialStep10', position: 'bottom' },
+  { selector: '.brush-size-section, .mobile-brush-sizes', textKey: 'tutorialStep2', position: 'right' },
+  { selector: '#palette-panel, #mobile-palette', textKey: 'tutorialStep3', position: 'left' },
+  { selector: '#canvas-area', textKey: 'tutorialStep4', position: 'center' },
+  { selector: '#toolbar button[data-i18n-title=\"toolUndo\"], #mobile-toolbar button[data-i18n-title=\"toolUndo\"]', textKey: 'tutorialStep5', position: 'right' },
+  { selector: '#footer', textKey: 'tutorialStep6', position: 'top' },
+  { selector: '#header .actions button[data-i18n=\"btnSave\"]', textKey: 'tutorialStep7', position: 'bottom' },
+  { selector: '#header .actions button[data-i18n=\"btnLoad\"]', textKey: 'tutorialStep8', position: 'bottom' },
+  { selector: '#header .actions button[data-i18n=\"btnNew\"]', textKey: 'tutorialStep9', position: 'bottom' },
+  { selector: '#header .actions button.primary', textKey: 'tutorialStep10', position: 'bottom' },
+  { selector: '#header .back-btn', textKey: 'tutorialStep11', position: 'bottom' },
+  { selector: '#header .actions button.icon-btn', textKey: 'tutorialStep12', position: 'bottom' },
 ];
 
 let tutorialStep = 0;
@@ -1475,7 +1924,7 @@ function positionTutorial(target, step) {
     <div style="font-size:12px;color:var(--text-light);margin-bottom:2px;">${t('tutorialTitle')} · ${stepNum}/${totalSteps}</div>
     <p>${t(step.textKey)}</p>
     <div class="btn-row">
-      <button class="btn-skip" id="tut-skip" data-i18n="tutorialSkip">${t('tutorialSkip')}</button>
+      <button class="btn-skip" id="tut-skip">${t('tutorialSkip')}</button>
       <button class="btn-next" id="tut-next">${tutorialStep < totalSteps - 1 ? t('tutorialNext') : t('tutorialDone')}</button>
     </div>
   `;
@@ -1532,79 +1981,26 @@ function endTutorial() {
 // ================================================================
 // Cat frames: 16x12 each, encoded as strings
 // chars: ' '=transparent, '1'=black, '2'=dark gray, '3'=white(eye), '4'=pink(ear)
-const catFrames = [
-  // Frame 1: front legs extended
-  [
-    '     1111      ',
-    '    111111     ',
-    '   11 1 11     ',
-    '  111 1 111    ',
-    ' 11111111111   ',
-    ' 11 4 114 11   ',
-    ' 11 3 113 11   ',
-    ' 1111 1 1111   ',
-    '  111   111    ',
-    '  111 1 111    ',
-    '  11    11     ',
-  ],
-  // Frame 2: mid stride 1
-  [
-    '     1111      ',
-    '    111111     ',
-    '   11 1  11    ',
-    '  111 1 111    ',
-    ' 11111111111   ',
-    ' 11 4 114 11   ',
-    ' 11 3 113 11   ',
-    ' 1111 1 1111   ',
-    '   1111111     ',
-    '  111   111    ',
-    '  11     11    ',
-    ' 11       11   ',
-  ],
-  // Frame 3: legs gathered
-  [
-    '     1111      ',
-    '    111111     ',
-    '   11 1  111   ',
-    '  111 1  111   ',
-    ' 111111111111  ',
-    ' 11 4 114 11   ',
-    ' 11 3 113 11   ',
-    ' 1111 1 1111   ',
-    '   1111111     ',
-    '   111 111     ',
-    '  11     11    ',
-  ],
-  // Frame 4: mid stride 2
-  [
-    '     1111      ',
-    '    111111     ',
-    '   11 1 11     ',
-    '  11111 111    ',
-    ' 11111111111   ',
-    ' 11 4 114 11   ',
-    ' 11 3 113 11   ',
-    '  11 1 1111    ',
-    '  11111 11     ',
-    '  111   111    ',
-    ' 11     11     ',
-  ],
-];
-
-let catFrameIndex = 0;
-let catX = -20;
+// Cat image for loading animation
+let catImage = null;
+let catX = -80;
 let catAnimId = null;
 let dustParticles = [];
+let catDirection = 1; // 1 = right, -1 = left
+
+function loadCatImage() {
+  catImage = new Image();
+  catImage.src = 'black cat.jpg';
+}
 
 function generateDust() {
   dustParticles = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     dustParticles.push({
-      x: Math.random() * 16 - 4,
-      y: Math.random() * 4 - 2,
-      life: Math.random() * 0.5 + 0.3,
-      size: Math.random() * 2 + 1,
+      x: Math.random() * 30 - 10,
+      y: Math.random() * 6 - 2,
+      life: Math.random() * 0.6 + 0.2,
+      size: Math.random() * 3 + 1,
     });
   }
 }
@@ -1615,55 +2011,70 @@ function animateCat() {
   const ctx = canvas.getContext('2d');
   const w = canvas.width;
   const h = canvas.height;
-  const groundY = 85;
 
-  ctx.clearRect(0, 0, w, h);
+  // Fill canvas background to match app theme
+  ctx.fillStyle = '#FFF8F0';
+  ctx.fillRect(0, 0, w, h);
+  const groundY = 105;
+  const catH = 70; // display height of cat
+  const catW = catH * (catImage ? catImage.width / catImage.height : 1);
 
-  // Draw ground shadow
-  ctx.fillStyle = 'rgba(74,48,40,0.06)';
+  // Bounce: cat bobs up and down while running
+  const bounce = Math.abs(Math.sin(Date.now() / 120)) * 6;
+  const catDrawY = groundY - catH + bounce;
+
+  // Ground shadow (scales with bounce — smaller when cat is higher)
+  const shadowScale = 1 - bounce / 20;
+  ctx.fillStyle = 'rgba(74,48,40,0.08)';
   ctx.beginPath();
-  ctx.ellipse(catX + 8, groundY + 6, 20, 4, 0, 0, Math.PI * 2);
+  ctx.ellipse(catX + catW/2, groundY + 4, catW * 0.35 * shadowScale, 4 * shadowScale, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Draw dust particles
+  // Dust particles
   dustParticles.forEach(p => {
-    p.life -= 0.02;
-    p.y -= 0.3;
-    if (p.life <= 0) { p.life = Math.random() * 0.5 + 0.3; p.x = Math.random() * 14 - 2; p.y = Math.random() * 4 - 2; }
+    p.life -= 0.015;
+    p.y -= 0.4;
+    if (p.life <= 0) {
+      p.life = Math.random() * 0.6 + 0.2;
+      p.x = Math.random() * 25 - 5;
+      p.y = Math.random() * 4 - 2;
+    }
     ctx.fillStyle = 'rgba(180,150,130,' + p.life + ')';
     ctx.fillRect(catX + p.x, groundY + p.y, p.size, p.size);
   });
 
-  // Draw cat frame
-  const frame = catFrames[catFrameIndex];
-  const pixelSize = 3;
-  const offsetX = catX;
-  const offsetY = groundY - frame.length * pixelSize;
-
-  for (let r = 0; r < frame.length; r++) {
-    for (let c = 0; c < frame[r].length; c++) {
-      const ch = frame[r][c];
-      if (ch === ' ') continue;
-      switch(ch) {
-        case '1': ctx.fillStyle = '#3A2A2A'; break; // dark body
-        case '2': ctx.fillStyle = '#5A4A4A'; break; // lighter shading
-        case '3': ctx.fillStyle = '#FFFFFF'; break; // eye white
-        case '4': ctx.fillStyle = '#F0A0A0'; break; // ear pink
-        default: ctx.fillStyle = '#3A2A2A';
-      }
-      ctx.fillRect(offsetX + c * pixelSize, offsetY + r * pixelSize, pixelSize, pixelSize);
+  // Draw cat image
+  if (catImage && catImage.complete) {
+    ctx.save();
+    if (catDirection === -1) {
+      // Flip horizontally when running left
+      ctx.translate(catX + catW, catDrawY);
+      ctx.scale(-1, 1);
+      ctx.drawImage(catImage, 0, 0, catW, catH);
+    } else {
+      ctx.drawImage(catImage, catX, catDrawY, catW, catH);
     }
+    ctx.restore();
+  } else {
+    // Fallback: draw a placeholder silhouette
+    ctx.fillStyle = '#3A2A2A';
+    ctx.beginPath();
+    ctx.ellipse(catX + catW/2, catDrawY + catH/2, catW/2.5, catH/2.2, 0, 0, Math.PI * 2);
+    ctx.fill();
   }
 
-  // Advance frame
-  catX += 2.5;
-  if (catX > w + 20) {
-    catX = -20;
+  // Advance position
+  const speed = 2;
+  catX += speed * catDirection;
+
+  // Reverse direction at edges
+  if (catX > w - catW - 10) {
+    catDirection = -1;
+    generateDust();
+  } else if (catX < 10) {
+    catDirection = 1;
     generateDust();
   }
-
-  // Cycle through frames every 120ms
-  catFrameIndex = Math.floor(Date.now() / 120) % catFrames.length;
 
   catAnimId = requestAnimationFrame(animateCat);
 }
@@ -1677,10 +2088,12 @@ function init() {
   // Restore auto-saved state or create new
   const restored = restoreAutoSave();
   if (!restored || !state.pixels || state.pixels.length === 0) {
-    initPixels(64, '#FFFFFF');
+    initPixels(64, 64, '#FFFFFF');
   }
 
   setColor(state.currentColor);
+  setBrushSize(state.brushSize || 1);
+  initBrushDots();
   resizeCanvas();
   renderCanvas();
   renderPresetSwatches();
@@ -1692,26 +2105,34 @@ function init() {
   });
   $gridToggle.checked = state.showGrid;
 
-  // Auto zoom
-  setZoom(state.zoom);
-
   // Loading animation
+  loadCatImage();
   generateDust();
   animateCat();
 
-  // Hide loading after a minimum display time
+  // Hide loading, show gallery page
   setTimeout(() => {
     $loading.classList.add('hidden');
-    $app.classList.remove('hidden');
+    state.currentPage = 'gallery';
+    document.getElementById('gallery-page').classList.remove('hidden');
+    renderGallery();
     // Stop animation after fade
     setTimeout(() => {
       if (catAnimId) cancelAnimationFrame(catAnimId);
     }, 600);
   }, 1800);
 
-  // Auto-start tutorial for first-time users
+  // Language selection for first-time users
+  const langChosen = localStorage.getItem('pixelArt_langChosen');
   const tutorialDone = localStorage.getItem('pixelArt_tutorialDone');
-  if (!tutorialDone) {
+
+  if (!langChosen) {
+    // First time ever: show language selection, then tutorial
+    setTimeout(() => {
+      document.getElementById('lang-select-overlay').classList.remove('hidden');
+    }, 2000);
+  } else if (!tutorialDone) {
+    // Returning user who skipped tutorial: ask again
     setTimeout(() => startTutorial(), 2500);
   }
 
