@@ -262,11 +262,6 @@ input { font-family: inherit; font-size: inherit; }
   background: var(--primary); color: #fff; border-color: var(--primary);
 }
 #footer .footer-info { color: var(--text-light); }
-.resize-canvas-btn {
-  padding: 2px 6px; border-radius: var(--radius-sm); font-size: 14px;
-  border: 1px solid rgba(74,48,40,0.15); background: #fff; cursor: pointer;
-}
-.resize-canvas-btn:hover { background: var(--hover); }
 
 /* ============ Dialogs ============ */
 #dialog-overlay {
@@ -402,6 +397,12 @@ input { font-family: inherit; font-size: inherit; }
   background: var(--panel-bg);
   border-top: 1px solid rgba(74,48,40,0.06);
   overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+#mobile-brush-bar {
+  display: none; align-items: center; justify-content: center;
+  gap: 10px; padding: 6px 8px; flex-shrink: 0;
+  background: var(--panel-bg);
+  border-top: 1px solid rgba(74,48,40,0.06);
 }
 #mobile-palette .color-swatch {
   width: 28px; height: 28px; flex-shrink: 0;
@@ -564,6 +565,7 @@ input { font-family: inherit; font-size: inherit; }
   #toolbar { display: none; }
   #palette-panel { display: none; }
   #mobile-toolbar { display: flex; }
+  #mobile-brush-bar { display: flex; }
   #mobile-palette { display: flex; }
 
   /* Canvas area */
@@ -578,19 +580,28 @@ input { font-family: inherit; font-size: inherit; }
   #gallery-header { padding: 0 10px; }
   #gallery-new-btn { padding: 12px 36px; font-size: 15px; }
 
-  /* Mobile tools: large tap targets */
-  #mobile-toolbar { gap: 4px; padding: 6px 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: center; }
+  /* Mobile Toolbar Row 1: drawing tools */
+  #mobile-toolbar { gap: 4px; padding: 5px 4px; justify-content: center; }
   #mobile-toolbar .tool-btn { width: 44px; height: 44px; min-width: 44px; font-size: 20px; border-radius: 10px; }
   #mobile-toolbar .tool-btn:active { background: var(--hover); transform: scale(0.92); }
 
-  /* Mobile palette: scrollable row */
-  #mobile-palette { padding: 6px 6px; gap: 5px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  #mobile-palette .color-swatch { width: 30px; height: 30px; min-width: 30px; border-radius: 6px; }
+  /* Mobile Brush Bar Row 2: brush sizes + color */
+  #mobile-brush-bar {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; padding: 4px 8px;
+    background: var(--panel-bg);
+    border-top: 1px solid rgba(74,48,40,0.06);
+  }
+  #mobile-brush-bar.hidden { display: none; }
+  .mobile-brush-sizes { display: flex; flex-direction: row; gap: 6px; align-items: center; }
+  .mobile-brush-sizes .brush-btn { width: 44px; height: 38px; padding: 4px; }
+  .mobile-color-row { display: flex; align-items: center; gap: 6px; }
+  #mobile-current-color { width: 34px; height: 34px; }
+  #mobile-color-input { width: 38px; height: 34px; }
 
-  /* Mobile brush */
-  .mobile-brush-sizes .brush-btn { width: 40px; height: 34px; padding: 3px; }
-  #mobile-current-color { width: 32px; height: 32px; }
-  #mobile-color-input { width: 34px; height: 34px; }
+  /* Mobile palette row */
+  #mobile-palette { padding: 4px 6px; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  #mobile-palette .color-swatch { width: 28px; height: 28px; min-width: 28px; border-radius: 5px; }
 
   /* Dialog full-width on mobile */
   .dialog { width: 94%; padding: 18px; }
@@ -615,6 +626,9 @@ input { font-family: inherit; font-size: inherit; }
 
   /* Mobile tools */
   #mobile-toolbar .tool-btn { width: 40px; height: 40px; min-width: 40px; font-size: 18px; }
+
+  /* Mobile brush bar */
+  .mobile-brush-sizes .brush-btn { width: 38px; height: 32px; }
 
   /* Mobile palette */
   #mobile-palette .color-swatch { width: 26px; height: 26px; min-width: 26px; }
@@ -755,7 +769,7 @@ input { font-family: inherit; font-size: inherit; }
     <button onclick="openResizeDialog()" class="resize-canvas-btn" title="调整画布尺寸">📐</button>
   </footer>
 
-  <!-- Mobile Toolbar -->
+  <!-- Mobile Toolbar: Row 1 — Drawing Tools -->
   <div id="mobile-toolbar">
     <button class="tool-btn active" data-tool="pen" onclick="switchTool('pen')" data-i18n-title="toolPen">✏️</button>
     <button class="tool-btn" data-tool="eraser" onclick="switchTool('eraser')" data-i18n-title="toolEraser">🧹</button>
@@ -763,15 +777,23 @@ input { font-family: inherit; font-size: inherit; }
     <button class="tool-btn" data-tool="picker" onclick="switchTool('picker')" data-i18n-title="toolPicker">💉</button>
     <button class="tool-btn" onclick="undo()" data-i18n-title="toolUndo">↩️</button>
     <button class="tool-btn" onclick="redo()" data-i18n-title="toolRedo">↪️</button>
+  </div>
+
+  <!-- Mobile Toolbar: Row 2 — Brush Sizes + Color -->
+  <div id="mobile-brush-bar">
     <div class="mobile-brush-sizes" id="mobile-brush-sizes">
       <button class="brush-btn active" data-size="1" onclick="setBrushSize(1)" title="1×1"></button>
       <button class="brush-btn" data-size="2" onclick="setBrushSize(2)" title="2×2"></button>
       <button class="brush-btn" data-size="3" onclick="setBrushSize(3)" title="3×3"></button>
       <button class="brush-btn" data-size="4" onclick="setBrushSize(4)" title="4×4"></button>
     </div>
-    <div id="mobile-current-color" style="width:30px;height:30px;border-radius:50%;background:#000;border:2px solid #fff;box-shadow:var(--shadow-sm);flex-shrink:0;"></div>
-    <input type="color" id="mobile-color-input" value="#000000" onchange="setColor(this.value)" style="width:32px;height:32px;border:none;cursor:pointer;border-radius:4px;">
+    <div class="mobile-color-row">
+      <div id="mobile-current-color" style="width:32px;height:32px;border-radius:50%;background:#000;border:2px solid #fff;box-shadow:var(--shadow-sm);flex-shrink:0;"></div>
+      <input type="color" id="mobile-color-input" value="#000000" onchange="setColor(this.value)" style="width:36px;height:32px;border:none;cursor:pointer;border-radius:6px;">
+    </div>
   </div>
+
+  <!-- Mobile Palette Row -->
   <div id="mobile-palette"></div>
 </div>
 
@@ -1883,12 +1905,38 @@ function goToGallery() {
 // ================================================================
 let isDrawing = false;
 let lastDrawnPixel = null;
+let isPanning = false;
+let panStartX = 0, panStartY = 0;
+let panStartScrollX = 0, panStartScrollY = 0;
+
+function getTouchMidpoint(touches) {
+  let x = 0, y = 0;
+  for (let i = 0; i < touches.length; i++) {
+    x += touches[i].clientX;
+    y += touches[i].clientY;
+  }
+  return { x: x / touches.length, y: y / touches.length };
+}
 
 function startDraw(e) {
+  // Two-finger pan
+  if (e.touches && e.touches.length === 2) {
+    e.preventDefault();
+    isDrawing = false;
+    isPanning = true;
+    const mid = getTouchMidpoint(e.touches);
+    panStartX = mid.x;
+    panStartY = mid.y;
+    panStartScrollX = $canvasArea.scrollLeft;
+    panStartScrollY = $canvasArea.scrollTop;
+    return;
+  }
+  // Single finger draw
   e.preventDefault();
   const pos = getPixelFromEvent(e);
   if (!pos) return;
   isDrawing = true;
+  isPanning = false;
   lastDrawnPixel = pos;
   if (state.currentTool === 'pen' || state.currentTool === 'eraser') {
     saveHistory();
@@ -1898,11 +1946,20 @@ function startDraw(e) {
 }
 
 function moveDraw(e) {
+  // Two-finger pan
+  if (isPanning && e.touches && e.touches.length === 2) {
+    e.preventDefault();
+    const mid = getTouchMidpoint(e.touches);
+    const dx = mid.x - panStartX;
+    const dy = mid.y - panStartY;
+    $canvasArea.scrollLeft = panStartScrollX - dx;
+    $canvasArea.scrollTop = panStartScrollY - dy;
+    return;
+  }
   if (!isDrawing) return;
   e.preventDefault();
   const pos = getPixelFromEvent(e);
   if (!pos) return;
-  // Skip if same pixel as last (improves performance)
   if (lastDrawnPixel && lastDrawnPixel.row === pos.row && lastDrawnPixel.col === pos.col) return;
   lastDrawnPixel = pos;
   if (state.currentTool === 'pen' || state.currentTool === 'eraser') {
@@ -1912,6 +1969,10 @@ function moveDraw(e) {
 }
 
 function endDraw(e) {
+  if (isPanning) {
+    isPanning = false;
+    return;
+  }
   if (!isDrawing) return;
   isDrawing = false;
   lastDrawnPixel = null;
@@ -1921,13 +1982,13 @@ function endDraw(e) {
   }
 }
 
-// Mouse events
+// Mouse events (desktop)
 $mainCanvas.addEventListener('mousedown', startDraw);
 $mainCanvas.addEventListener('mousemove', moveDraw);
 $mainCanvas.addEventListener('mouseup', endDraw);
 $mainCanvas.addEventListener('mouseleave', endDraw);
 
-// Touch events
+// Touch events (mobile)
 $mainCanvas.addEventListener('touchstart', startDraw, { passive: false });
 $mainCanvas.addEventListener('touchmove', moveDraw, { passive: false });
 $mainCanvas.addEventListener('touchend', endDraw);
