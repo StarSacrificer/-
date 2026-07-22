@@ -1901,11 +1901,33 @@ function goToGallery() {
 }
 
 // ================================================================
+//  BRESENHAM LINE INTERPOLATION
+// ================================================================
+function drawLineBetween(r0, c0, r1, c1) {
+  const points = [];
+  const dr = Math.abs(r1 - r0), dc = Math.abs(c1 - c0);
+  const sr = r0 < r1 ? 1 : -1, sc = c0 < c1 ? 1 : -1;
+  let err = dr - dc;
+  let r = r0, c = c0;
+  while (true) {
+    points.push({ row: r, col: c });
+    if (r === r1 && c === c1) break;
+    const e2 = 2 * err;
+    if (e2 > -dc) { err -= dc; r += sr; }
+    if (e2 < dr) { err += dr; c += sc; }
+  }
+  return points;
+}
+
+// ================================================================
 //  DRAWING EVENT HANDLERS
 // ================================================================
 let isDrawing = false;
 let lastDrawnPixel = null;
 let isPanning = false;
+let isPinching = false;
+let pinchStartDist = 0;
+let pinchStartZoom = 0;
 let panStartX = 0, panStartY = 0;
 let panStartScrollX = 0, panStartScrollY = 0;
 
@@ -1918,12 +1940,21 @@ function getTouchMidpoint(touches) {
   return { x: x / touches.length, y: y / touches.length };
 }
 
+function getTouchDistance(touches) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
 function startDraw(e) {
-  // Two-finger pan
+  // Two-finger gesture
   if (e.touches && e.touches.length === 2) {
     e.preventDefault();
     isDrawing = false;
     isPanning = true;
+    isPinching = true;
+    pinchStartDist = getTouchDistance(e.touches);
+    pinchStartZoom = state.zoom;
     const mid = getTouchMidpoint(e.touches);
     panStartX = mid.x;
     panStartY = mid.y;
@@ -1937,6 +1968,7 @@ function startDraw(e) {
   if (!pos) return;
   isDrawing = true;
   isPanning = false;
+  isPinching = false;
   lastDrawnPixel = pos;
   if (state.currentTool === 'pen' || state.currentTool === 'eraser') {
     saveHistory();
@@ -1946,14 +1978,33 @@ function startDraw(e) {
 }
 
 function moveDraw(e) {
-  // Two-finger pan
+  // Two-finger: pinch zoom + pan
   if (isPanning && e.touches && e.touches.length === 2) {
     e.preventDefault();
+    const dist = getTouchDistance(e.touches);
     const mid = getTouchMidpoint(e.touches);
     const dx = mid.x - panStartX;
     const dy = mid.y - panStartY;
-    $canvasArea.scrollLeft = panStartScrollX - dx;
-    $canvasArea.scrollTop = panStartScrollY - dy;
+
+    // Pinch zoom (if distance changed enough)
+    if (isPinching && pinchStartDist > 0 && Math.abs(dist - pinchStartDist) > 8) {
+      let newZoom = Math.round(pinchStartZoom * (dist / pinchStartDist));
+      newZoom = Math.max(2, Math.min(32, newZoom));
+      if (newZoom !== state.zoom) {
+        // Keep the midpoint stable while zooming
+        setZoom(newZoom);
+        // Reset pan reference to avoid jump
+        const newMid = getTouchMidpoint(e.touches);
+        panStartX = newMid.x;
+        panStartY = newMid.y;
+        panStartScrollX = $canvasArea.scrollLeft;
+        panStartScrollY = $canvasArea.scrollTop;
+      }
+    } else {
+      // Pan (fingers move together)
+      $canvasArea.scrollLeft = panStartScrollX - dx;
+      $canvasArea.scrollTop = panStartScrollY - dy;
+    }
     return;
   }
   if (!isDrawing) return;
@@ -1961,16 +2012,25 @@ function moveDraw(e) {
   const pos = getPixelFromEvent(e);
   if (!pos) return;
   if (lastDrawnPixel && lastDrawnPixel.row === pos.row && lastDrawnPixel.col === pos.col) return;
-  lastDrawnPixel = pos;
-  if (state.currentTool === 'pen' || state.currentTool === 'eraser') {
+
+  // Bresenham interpolation for continuous lines
+  if (lastDrawnPixel && (state.currentTool === 'pen' || state.currentTool === 'eraser')) {
+    const points = drawLineBetween(lastDrawnPixel.row, lastDrawnPixel.col, pos.row, pos.col);
+    for (const p of points) {
+      drawAt(p.row, p.col);
+    }
+  } else {
     drawAt(pos.row, pos.col);
-    renderCanvas();
   }
+  lastDrawnPixel = pos;
+  renderCanvas();
 }
 
 function endDraw(e) {
   if (isPanning) {
     isPanning = false;
+    isPinching = false;
+    pinchStartDist = 0;
     return;
   }
   if (!isDrawing) return;
