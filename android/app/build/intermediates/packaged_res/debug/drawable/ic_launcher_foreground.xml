@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- 5-pointed star in warm amber, centered at 54,50 -->
+    <path
+        android:fillColor="#E8A850"
+        android:pathData="M54,18 L62,40 L86,42 L68,58 L72,82 L54,70 L36,82 L40,58 L22,42 L46,40 Z" />
+</vector>
